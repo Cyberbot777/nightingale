@@ -15,3 +15,8 @@ class UserOut(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str
+
+class EntryCreate(BaseModel):
+    title: str
+    content: str
+

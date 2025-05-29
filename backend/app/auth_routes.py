@@ -6,14 +6,15 @@ from datetime import datetime, timedelta
 from app.database import get_db
 from app import models
 from app.schemas import UserCreate, UserOut, Token
+from app.config import settings
 
-# Configs
-SECRET_KEY = "supersecretkey"  # Replace with a more secure key!
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
-
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 auth_router = APIRouter()
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+# Config values
+SECRET_KEY = settings.secret_key
+ALGORITHM = settings.algorithm
+ACCESS_TOKEN_EXPIRE_MINUTES = settings.access_token_expire_minutes
 
 # Utility: Hashing
 def hash_password(password: str):
@@ -24,7 +25,7 @@ def verify_password(plain_password, hashed_password):
 
 def create_access_token(data: dict, expires_delta: timedelta = None):
     to_encode = data.copy()
-    expire = datetime.utcnow() + (expires_delta or timedelta(minutes=15))
+    expire = datetime.utcnow() + (expires_delta or timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
@@ -49,5 +50,5 @@ def login(user: UserCreate, db: Session = Depends(get_db)):
     if not db_user or not verify_password(user.password, db_user.hashed_password):
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
-    access_token = create_access_token(data={"sub": db_user.email})
+    access_token = create_access_token(data={"user_id": db_user.id})
     return {"access_token": access_token, "token_type": "bearer"}
