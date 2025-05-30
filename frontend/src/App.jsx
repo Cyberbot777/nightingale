@@ -1,13 +1,24 @@
-import './index.css';
+// src/App.jsx
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Navbar from './components/Navbar';
+import Home from './pages/Home';
+import Journal from './pages/Journal';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import About from './pages/About';
 
 function App() {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-gray-900 to-black text-white p-4">
-      <h1 className="text-4xl font-bold mb-4 animate-fade-in">Welcome to Nightingale</h1>
-      <p className="text-lg text-gray-300 max-w-xl text-center animate-fade-in delay-200">
-        A private space to reflect, unwind, and grow. Journal your thoughts and receive inspiring feedback.
-      </p>
-    </div>
+    <Router>
+      <Navbar />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/journal" element={<Journal />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/about" element={<About />} />
+      </Routes>
+    </Router>
   );
 }
 
