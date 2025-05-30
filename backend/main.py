@@ -12,10 +12,13 @@ models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
-# CORS setup - allow frontend to call the backend
+# CORS setup - allow frontend (both dev and production)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],  # React dev server
+    allow_origins=[
+        "http://localhost:5173",                     # Local React dev
+        "https://nightingale-sigma.vercel.app"      # Deployed Vercel frontend
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
