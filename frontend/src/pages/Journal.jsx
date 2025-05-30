@@ -1,4 +1,7 @@
+// frontend/src/pages/Journal.jsx
+
 import React, { useState } from 'react';
+import { API_BASE_URL } from '../api'; // Make sure this file exists!
 
 const Journal = () => {
   const [entryText, setEntryText] = useState('');
@@ -10,7 +13,7 @@ const Journal = () => {
     setLoading(true);
     setError('');
     try {
-      const response = await fetch('http://localhost:8000/ai-feedback', {
+      const response = await fetch(`${API_BASE_URL}/ai-feedback`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
