@@ -32,7 +32,7 @@ const Journal = () => {
       if (response.ok) {
         const updatedEntries = data.map(entry => ({
           ...entry,
-          hasFeedback: !!entry.feedback, // Ensure hasFeedback is true only if feedback exists
+          hasFeedback: !!entry.feedback,
           feedback: entry.feedback || '',
           displayedFeedback: entry.feedback || '',
           isTyping: false,
@@ -119,7 +119,6 @@ const Journal = () => {
         setNewEntry({ title: '', content: '' });
         setPage(1);
         await fetchEntries();
-        setError('Entry saved successfully.');
       } else {
         setError(data.detail || 'Failed to add journal entry.');
       }
@@ -147,7 +146,6 @@ const Journal = () => {
       if (response.ok) {
         setEntries(entries.map(entry => entry.id === id ? { ...entry, ...data } : entry));
         setEditEntry(null);
-        setError('Entry updated successfully.');
       } else {
         setError(data.detail || 'Failed to update journal entry.');
       }
@@ -175,7 +173,6 @@ const Journal = () => {
         if (entries.length === 1 && page > 1) {
           setPage(page - 1);
         }
-        setError('Entry deleted successfully.');
       } else {
         setError(data.detail || 'Failed to delete journal entry.');
       }
@@ -296,7 +293,7 @@ const Journal = () => {
               {loading ? 'Logging in...' : 'Login'}
             </button>
           </form>
-          {error && <p className="text-red-400 mt-4">{error}</p>}
+          {error && <p className="text-yellow-300 mt-2 font-sans text-sm">{error}</p>}
         </div>
       </div>
     );
@@ -347,6 +344,7 @@ const Journal = () => {
               {loading ? 'Saving...' : 'Add Entry'}
             </button>
           </div>
+          {error && <p className="text-yellow-300 mt-2 font-sans text-sm">{error}</p>}
         </form>
 
         <div>
@@ -448,10 +446,6 @@ const Journal = () => {
           >
             Next
           </button>
-        </div>
-
-        <div className="mt-8 p-4 bg-gray-800 border border-gray-700 rounded-md shadow-sm">
-          {error && <p className="text-red-400">{error}</p>}
         </div>
       </div>
     </div>
