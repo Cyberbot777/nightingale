@@ -64,13 +64,6 @@ const Journal = ({ token, setToken }) => {
     }
   }, [token, page, limit]);
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    setToken('');
-    setEntries([]);
-    setPage(1);
-  };
-
   const handleAddEntry = async (e) => {
     e.preventDefault();
     setAddLoading(true);
@@ -145,7 +138,7 @@ const Journal = ({ token, setToken }) => {
           setPage(page - 1);
         }
       } else {
-        setError(data.detail || 'Failed to update journal entry.');
+        setError(data.detail || 'Failed to delete journal entry.');
       }
     } catch (err) {
       setError('Failed to connect to backend.');
@@ -239,12 +232,12 @@ const Journal = ({ token, setToken }) => {
 
   if (!token) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-gray-950 via-black to-gray-900 text-white p-6">
-        <div className="max-w-2xl mx-auto animate-fade-in-down">
-          <h1 className="text-3xl sm:text-5xl font-bold mb-4 tracking-tight leading-tight text-white text-center">
+      <div className="min-h-screen flex items-center justify-center px-4 bg-gradient-to-b from-gray-950 via-black to-gray-900">
+        <div className="text-center animate-fade-in-down max-w-xl text-white">
+          <h1 className="text-3xl sm:text-5xl font-bold mb-4 tracking-tight leading-tight text-white">
             My Journal
           </h1>
-          <p className="text-sm sm:text-lg mb-6 text-white text-center">
+          <p className="text-sm sm:text-lg mb-6 text-white">
             Thanks for journaling. Sleep well.
           </p>
           <button
@@ -263,12 +256,6 @@ const Journal = ({ token, setToken }) => {
       <div className="max-w-2xl mx-auto animate-fade-in-up">
         <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2 text-center">My Journal</h1>
         <p className="text-gray-400 italic text-sm mb-6 text-center">A Nightly Reflection with Florence Nightingale</p>
-        <button
-          onClick={handleLogout}
-          className="mb-4 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 transition-colors rounded-full text-sm sm:text-base font-medium shadow-lg hover:scale-105 transform duration-300"
-        >
-          Logout
-        </button>
 
         {!hasJournaledToday && (
           <p className="text-gray-400 italic text-sm mb-4 text-center">Reflect on your day with Florence’s Light</p>
