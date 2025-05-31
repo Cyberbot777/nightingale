@@ -1,6 +1,5 @@
-// frontend/src/pages/Journal.jsx
 import React, { useState, useEffect } from 'react';
-import { API_BASE_URL } from '../api'; // Ensure this points to http://localhost:8000
+import { API_BASE_URL } from '../api';
 
 const Journal = () => {
   const [entries, setEntries] = useState([]);
@@ -12,37 +11,42 @@ const Journal = () => {
   const [aiFeedback, setAiFeedback] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [page, setPage] = useState(1);
+  const [limit] = useState(5);
+  const [hasMore, setHasMore] = useState(true);
+
+  const fetchEntries = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const skip = (page - 1) * limit;
+      const response = await fetch(`${API_BASE_URL}/journal?skip=${skip}&limit=${limit}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        setEntries(data);
+        setHasMore(data.length === limit);
+      } else {
+        setError(data.detail || 'Failed to fetch journal entries.');
+      }
+    } catch (err) {
+      setError('Failed to connect to backend.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchEntries = async () => {
-      setLoading(true);
-      setError('');
-      try {
-        const response = await fetch(`${API_BASE_URL}/journal?skip=0&limit=10`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          },
-        });
-
-        const data = await response.json();
-        if (response.ok) {
-          setEntries(data);
-        } else {
-          setError(data.detail || 'Failed to fetch journal entries.');
-        }
-      } catch (err) {
-        setError('Failed to connect to backend.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
     if (token) {
       fetchEntries();
     }
-  }, [token]);
+  }, [token, page, limit]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -78,6 +82,7 @@ const Journal = () => {
     localStorage.removeItem('token');
     setToken('');
     setEntries([]);
+    setPage(1);
   };
 
   const handleAddEntry = async (e) => {
@@ -96,8 +101,9 @@ const Journal = () => {
 
       const data = await response.json();
       if (response.ok) {
-        setEntries([...entries, { ...data, id: entries.length + 1, created_at: new Date().toISOString() }]);
         setNewEntry({ title: '', content: '' });
+        setPage(1); // Reset to first page
+        await fetchEntries(); // Refetch entries to get the correct id
       } else {
         setError(data.detail || 'Failed to add journal entry.');
       }
@@ -149,6 +155,9 @@ const Journal = () => {
       const data = await response.json();
       if (response.ok) {
         setEntries(entries.filter(entry => entry.id !== id));
+        if (entries.length === 1 && page > 1) {
+          setPage(page - 1);
+        }
       } else {
         setError(data.detail || 'Failed to delete journal entry.');
       }
@@ -181,6 +190,18 @@ const Journal = () => {
       setError('Failed to connect to backend.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handlePreviousPage = () => {
+    if (page > 1) {
+      setPage(page - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (hasMore) {
+      setPage(page + 1);
     }
   };
 
@@ -232,6 +253,7 @@ const Journal = () => {
           onClick={() => {
             localStorage.removeItem('token');
             setToken('');
+            setPage(1);
           }}
           className="mb-4 px-6 py-2 bg-red-600 hover:bg-red-700 rounded-full transition-colors font-medium shadow-lg"
         >
@@ -325,6 +347,24 @@ const Journal = () => {
               </div>
             ))
           )}
+        </div>
+
+        <div className="flex justify-between mt-4">
+          <button
+            onClick={handlePreviousPage}
+            disabled={page === 1}
+            className="px-4 py-2 bg-gray-600 hover:bg-gray-700 rounded-full transition-colors font-medium disabled:opacity-50"
+          >
+            Previous
+          </button>
+          <span className="text-gray-400">Page {page}</span>
+          <button
+            onClick={handleNextPage}
+            disabled={!hasMore}
+            className="px-4 py-2 bg-gray-600 hover:bg-gray-700 rounded-full transition-colors font-medium disabled:opacity-50"
+          >
+            Next
+          </button>
         </div>
 
         <div className="mt-8 p-4 bg-gray-800 border border-gray-700 rounded-md shadow-sm">
