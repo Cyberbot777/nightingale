@@ -1,7 +1,11 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
 import openai
+from sqlalchemy.orm import Session
 from app.config import settings
+from app.database import get_db
+from app.auth_utils import get_current_user  
+from app import models
 
 router = APIRouter()
 
@@ -14,8 +18,17 @@ class EntryText(BaseModel):
 
 # POST: Generate AI feedback using GPT-3.5-turbo
 @router.post("/ai-feedback")
-def ai_feedback(entry: EntryText):
+def ai_feedback(
+    entry: EntryText,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user)
+):
+    # --- Check feedback usage limit ---
+    if current_user.email != "demo@nightingale.ai" and current_user.feedback_count >= 3:
+        raise HTTPException(status_code=403, detail="AI feedback limit reached (3/3)")
+
     try:
+        # --- Call OpenAI API ---
         response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
@@ -24,6 +37,13 @@ def ai_feedback(entry: EntryText):
             ],
             max_tokens=150
         )
+
+        # --- Update feedback usage count (skip for demo user) ---
+        if current_user.email != "demo@nightingale.ai":
+            current_user.feedback_count += 1
+            db.commit()
+
         return {"feedback": response.choices[0].message.content}
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

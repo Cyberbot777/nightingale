@@ -1,1 +1,24 @@
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# Python bytecode
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Alembic cache
+alembic/versions/*.pyc
+alembic/__pycache__/
+
+# Environment variables
 .env
+
+# VSCode/system files
+.vscode/
+.DS_Store
+*.swp
+
