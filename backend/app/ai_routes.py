@@ -4,13 +4,13 @@ import openai
 from sqlalchemy.orm import Session
 from app.config import settings
 from app.database import get_db
-from app.auth_utils import get_current_user  # Dependency to get current user
+from app.auth_routes import get_current_user  # Fixed import to use auth_routes
 from app import models
 
 router = APIRouter()
 
 # Configure OpenAI client using the new v1 interface
-client = openai.OpenAI(api_key=settings.openai_api_key)
+client = openai.OpenAI(api_key=settings.openai_api_key)  # Correct reference (matches app/config.py)
 
 # Request schema
 class EntryText(BaseModel):
