@@ -4,7 +4,7 @@ import openai
 from sqlalchemy.orm import Session
 from app.config import settings
 from app.database import get_db
-from app.auth_utils import get_current_user  
+from app.auth_utils import get_current_user  # Dependency to get current user
 from app import models
 
 router = APIRouter()
@@ -23,12 +23,12 @@ def ai_feedback(
     db: Session = Depends(get_db),
     current_user: models.User = Depends(get_current_user)
 ):
-    # --- Check feedback usage limit ---
+    # Check if feedback limit is reached
     if current_user.email != "demo@nightingale.ai" and current_user.feedback_count >= 3:
         raise HTTPException(status_code=403, detail="AI feedback limit reached (3/3)")
 
     try:
-        # --- Call OpenAI API ---
+        # Call OpenAI API
         response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
@@ -38,7 +38,7 @@ def ai_feedback(
             max_tokens=150
         )
 
-        # --- Update feedback usage count (skip for demo user) ---
+        # Update feedback usage count for non-demo users
         if current_user.email != "demo@nightingale.ai":
             current_user.feedback_count += 1
             db.commit()
