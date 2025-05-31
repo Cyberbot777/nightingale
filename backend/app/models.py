@@ -1,3 +1,4 @@
+# backend/app/models.py
 from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
@@ -13,8 +14,6 @@ class User(Base):
     email = Column(String, unique=True, index=True, nullable=False)
     hashed_password = Column(String, nullable=False)
     feedback_count = Column(Integer, default=0, nullable=False)
-
-
 
     # Relationship to journal entries
     entries = relationship("JournalEntry", back_populates="owner")
