@@ -6,15 +6,27 @@ import Journal from './pages/Journal';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import About from './pages/About';
+import { useState, useEffect } from 'react';
 
 function App() {
+  const [token, setToken] = useState(localStorage.getItem('token') || '');
+
+  useEffect(() => {
+    const handleStorageChange = () => {
+      setToken(localStorage.getItem('token') || '');
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
+
   return (
     <Router>
-      <Navbar />
+      <Navbar token={token} setToken={setToken} />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/journal" element={<Journal />} />
-        <Route path="/login" element={<Login />} />
+        <Route path="/journal" element={<Journal token={token} setToken={setToken} />} />
+        <Route path="/login" element={<Login setToken={setToken} />} />
         <Route path="/register" element={<Register />} />
         <Route path="/about" element={<About />} />
       </Routes>

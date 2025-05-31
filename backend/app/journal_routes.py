@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Depends, Query  # Added Query for pagination
+from fastapi import APIRouter, HTTPException, Depends, Query
 from pydantic import BaseModel
 import openai
 from sqlalchemy.orm import Session
@@ -14,12 +14,17 @@ journal_router = APIRouter()
 # Configure OpenAI client using the new v1 interface
 client = openai.OpenAI(api_key=settings.openai_api_key)
 
-# Response schema for GET /journal
+# Response schema for GET /journal (includes feedback field)
 class JournalEntryResponse(BaseModel):
     id: int
     title: str
     content: str
     created_at: datetime
+    feedback: str | None  # Add feedback field to the response schema
+
+# Response schema for POST /ai-feedback
+class AIFeedbackResponse(BaseModel):
+    feedback: str
 
 # Define Journal Entry schema for Create/Read/Update/Delete
 class JournalEntryCreate(BaseModel):
@@ -94,8 +99,8 @@ def delete_journal_entry(
     db.commit()
     return {"message": "Journal entry deleted successfully"}
 
-# POST: Generate AI feedback using GPT-3.5-turbo
-@journal_router.post("/ai-feedback/{entry_id}")
+# POST: Generate AI feedback using GPT-3.5-turbo and save it to the database
+@journal_router.post("/ai-feedback/{entry_id}", response_model=AIFeedbackResponse)
 def ai_feedback(
     entry_id: int,
     db: Session = Depends(get_db),
@@ -124,12 +129,19 @@ def ai_feedback(
             max_tokens=150
         )
 
+        feedback = response.choices[0].message.content
+
+        # Save the feedback to the journal entry
+        db_entry.feedback = feedback
+
         # Update feedback usage count for non-demo users
         if current_user.email != "demo@nightingale.ai":
             current_user.feedback_count += 1
-            db.commit()
 
-        return {"feedback": response.choices[0].message.content}
+        db.commit()
+        db.refresh(db_entry)
+
+        return {"feedback": feedback}
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
