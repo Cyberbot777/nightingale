@@ -32,10 +32,11 @@ const Journal = () => {
       if (response.ok) {
         const updatedEntries = data.map(entry => ({
           ...entry,
-          hasFeedback: entry.hasFeedback || false,
+          hasFeedback: !!entry.feedback, // Ensure hasFeedback is true only if feedback exists
           feedback: entry.feedback || '',
-          displayedFeedback: entry.displayedFeedback || '', // For typing animation
-          isTyping: entry.isTyping || false, // Track typing state
+          displayedFeedback: entry.feedback || '',
+          isTyping: false,
+          isExpanded: false,
         }));
         setEntries(updatedEntries);
 
@@ -209,10 +210,9 @@ const Journal = () => {
         };
         setEntries(updatedEntries);
 
-        // Typing animation
         let currentText = '';
         const fullText = data.feedback;
-        const typingSpeed = 50; // milliseconds per character
+        const typingSpeed = 50;
         for (let i = 0; i <= fullText.length; i++) {
           await new Promise(resolve => setTimeout(resolve, typingSpeed));
           currentText = fullText.substring(0, i);
@@ -242,6 +242,12 @@ const Journal = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const toggleExpand = (id) => {
+    setEntries(entries.map(entry => 
+      entry.id === id ? { ...entry, isExpanded: !entry.isExpanded } : entry
+    ));
   };
 
   const handlePreviousPage = () => {
@@ -349,66 +355,78 @@ const Journal = () => {
           ) : (
             entries.map((entry) => (
               <div key={entry.id} className="p-4 mb-4 bg-gray-800 border border-gray-700 rounded-md shadow-sm">
-                {editEntry && editEntry.id === entry.id ? (
-                  <div>
-                    <input
-                      type="text"
-                      value={editEntry.title}
-                      onChange={(e) => setEditEntry({ ...editEntry, title: e.target.value })}
-                      className="w-full p-2 mb-2 rounded-md bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-300"
-                    />
-                    <textarea
-                      value={editEntry.content}
-                      onChange={(e) => setEditEntry({ ...editEntry, content: e.target.value })}
-                      className="w-full p-2 mb-2 rounded-md bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-300"
-                    />
-                    <button
-                      onClick={() => handleUpdateEntry(entry.id)}
-                      className="px-4 py-1 bg-green-600 hover:bg-green-700 rounded-full transition-colors font-medium mr-2"
-                    >
-                      Save
-                    </button>
-                    <button
-                      onClick={() => setEditEntry(null)}
-                      className="px-4 py-1 bg-gray-600 hover:bg-gray-700 rounded-full transition-colors font-medium"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                ) : (
-                  <div>
-                    <h3 className="text-xl font-semibold">{entry.title}</h3>
-                    <p className="text-gray-300">{entry.content}</p>
-                    <p className="text-gray-400 text-sm italic"><small>{new Date(entry.created_at).toLocaleString()}</small></p>
-                    {entry.hasFeedback && (
-                      <div className="mt-2 p-2 bg-gray-700 border border-yellow-300 rounded-md">
-                        <p className="text-gray-200 font-semibold">Nightingale’s Wisdom:</p>
-                        <p className="text-gray-100">{entry.displayedFeedback}</p>
-                        {entry.isTyping && <span className="animate-pulse text-yellow-300">...</span>}
+                <div className="flex justify-between items-center">
+                  <h3 className="text-xl font-semibold">{entry.title}</h3>
+                  <button
+                    onClick={() => toggleExpand(entry.id)}
+                    className="text-yellow-300 hover:text-yellow-400 transition-colors"
+                  >
+                    {entry.isExpanded ? 'Collapse' : 'Expand'}
+                  </button>
+                </div>
+                {entry.isExpanded ? (
+                  <>
+                    {editEntry && editEntry.id === entry.id ? (
+                      <div className="mt-2">
+                        <input
+                          type="text"
+                          value={editEntry.title}
+                          onChange={(e) => setEditEntry({ ...editEntry, title: e.target.value })}
+                          className="w-full p-2 mb-2 rounded-md bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-300"
+                        />
+                        <textarea
+                          value={editEntry.content}
+                          onChange={(e) => setEditEntry({ ...editEntry, content: e.target.value })}
+                          className="w-full p-2 mb-2 rounded-md bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-300"
+                        />
+                        <button
+                          onClick={() => handleUpdateEntry(entry.id)}
+                          className="px-4 py-1 bg-green-600 hover:bg-green-700 rounded-full transition-colors font-medium mr-2"
+                        >
+                          Save
+                        </button>
+                        <button
+                          onClick={() => setEditEntry(null)}
+                          className="px-4 py-1 bg-gray-600 hover:bg-gray-700 rounded-full transition-colors font-medium"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="mt-2">
+                        <p className="text-gray-300">{entry.content}</p>
+                        <p className="text-gray-400 text-sm italic"><small>{new Date(entry.created_at).toLocaleString()}</small></p>
+                        {entry.hasFeedback && (
+                          <div className="mt-2 p-2 bg-gray-700 border border-yellow-300 rounded-md">
+                            <p className="text-gray-200 font-semibold">Nightingale’s Wisdom:</p>
+                            <p className="text-gray-100">{entry.displayedFeedback}</p>
+                            {entry.isTyping && <span className="animate-pulse text-yellow-300">...</span>}
+                          </div>
+                        )}
+                        <button
+                          onClick={() => setEditEntry({ id: entry.id, title: entry.title, content: entry.content })}
+                          className="mt-2 mr-2 px-4 py-1 bg-blue-600 hover:bg-blue-700 rounded-full transition-colors font-medium"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDeleteEntry(entry.id)}
+                          className="mt-2 mr-2 px-4 py-1 bg-red-600 hover:bg-red-700 rounded-full transition-colors font-medium"
+                        >
+                          Delete
+                        </button>
+                        <button
+                          onClick={() => handleGetFeedback(entry.id)}
+                          disabled={entry.hasFeedback}
+                          className="mt-2 px-4 py-1 bg-indigo-600 hover:bg-indigo-700 rounded-full transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                          title={entry.hasFeedback ? "Feedback Received" : "Request Nightingale's Wisdom"}
+                        >
+                          Nightingale’s Wisdom
+                        </button>
                       </div>
                     )}
-                    <button
-                      onClick={() => setEditEntry({ id: entry.id, title: entry.title, content: entry.content })}
-                      className="mt-2 mr-2 px-4 py-1 bg-blue-600 hover:bg-blue-700 rounded-full transition-colors font-medium"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDeleteEntry(entry.id)}
-                      className="mt-2 mr-2 px-4 py-1 bg-red-600 hover:bg-red-700 rounded-full transition-colors font-medium"
-                    >
-                      Delete
-                    </button>
-                    <button
-                      onClick={() => handleGetFeedback(entry.id)}
-                      disabled={entry.hasFeedback}
-                      className="mt-2 px-4 py-1 bg-indigo-600 hover:bg-indigo-700 rounded-full transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-                      title={entry.hasFeedback ? "Feedback Received" : "Request Nightingale's Wisdom"}
-                    >
-                      Nightingale’s Wisdom
-                    </button>
-                  </div>
-                )}
+                  </>
+                ) : null}
               </div>
             ))
           )}
