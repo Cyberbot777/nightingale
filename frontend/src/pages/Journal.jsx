@@ -8,12 +8,12 @@ const Journal = () => {
   const [password, setPassword] = useState('');
   const [newEntry, setNewEntry] = useState({ title: '', content: '' });
   const [editEntry, setEditEntry] = useState(null);
-  const [aiFeedback, setAiFeedback] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [page, setPage] = useState(1);
   const [limit] = useState(5);
   const [hasMore, setHasMore] = useState(true);
+  const [hasJournaledToday, setHasJournaledToday] = useState(false);
 
   const fetchEntries = async () => {
     setLoading(true);
@@ -30,7 +30,21 @@ const Journal = () => {
 
       const data = await response.json();
       if (response.ok) {
-        setEntries(data);
+        const updatedEntries = data.map(entry => ({
+          ...entry,
+          hasFeedback: entry.hasFeedback || false,
+          feedback: entry.feedback || '',
+          displayedFeedback: entry.displayedFeedback || '', // For typing animation
+          isTyping: entry.isTyping || false, // Track typing state
+        }));
+        setEntries(updatedEntries);
+
+        const today = new Date().toISOString().split('T')[0];
+        const journaledToday = updatedEntries.some(entry => 
+          new Date(entry.created_at).toISOString().split('T')[0] === today
+        );
+        setHasJournaledToday(journaledToday);
+
         setHasMore(data.length === limit);
       } else {
         setError(data.detail || 'Failed to fetch journal entries.');
@@ -102,8 +116,9 @@ const Journal = () => {
       const data = await response.json();
       if (response.ok) {
         setNewEntry({ title: '', content: '' });
-        setPage(1); // Reset to first page
-        await fetchEntries(); // Refetch entries to get the correct id
+        setPage(1);
+        await fetchEntries();
+        setError('Entry saved successfully.');
       } else {
         setError(data.detail || 'Failed to add journal entry.');
       }
@@ -131,6 +146,7 @@ const Journal = () => {
       if (response.ok) {
         setEntries(entries.map(entry => entry.id === id ? { ...entry, ...data } : entry));
         setEditEntry(null);
+        setError('Entry updated successfully.');
       } else {
         setError(data.detail || 'Failed to update journal entry.');
       }
@@ -158,6 +174,7 @@ const Journal = () => {
         if (entries.length === 1 && page > 1) {
           setPage(page - 1);
         }
+        setError('Entry deleted successfully.');
       } else {
         setError(data.detail || 'Failed to delete journal entry.');
       }
@@ -171,7 +188,6 @@ const Journal = () => {
   const handleGetFeedback = async (id) => {
     setLoading(true);
     setError('');
-    setAiFeedback('');
     try {
       const response = await fetch(`${API_BASE_URL}/ai-feedback/${id}`, {
         method: 'POST',
@@ -182,7 +198,42 @@ const Journal = () => {
 
       const data = await response.json();
       if (response.ok) {
-        setAiFeedback(data.feedback);
+        const entryIndex = entries.findIndex(entry => entry.id === id);
+        const updatedEntries = [...entries];
+        updatedEntries[entryIndex] = {
+          ...updatedEntries[entryIndex],
+          hasFeedback: true,
+          feedback: data.feedback,
+          displayedFeedback: '',
+          isTyping: true,
+        };
+        setEntries(updatedEntries);
+
+        // Typing animation
+        let currentText = '';
+        const fullText = data.feedback;
+        const typingSpeed = 50; // milliseconds per character
+        for (let i = 0; i <= fullText.length; i++) {
+          await new Promise(resolve => setTimeout(resolve, typingSpeed));
+          currentText = fullText.substring(0, i);
+          setEntries(prevEntries => {
+            const newEntries = [...prevEntries];
+            newEntries[entryIndex] = {
+              ...newEntries[entryIndex],
+              displayedFeedback: currentText,
+            };
+            return newEntries;
+          });
+        }
+
+        setEntries(prevEntries => {
+          const newEntries = [...prevEntries];
+          newEntries[entryIndex] = {
+            ...newEntries[entryIndex],
+            isTyping: false,
+          };
+          return newEntries;
+        });
       } else {
         setError(data.detail || 'Failed to get AI feedback.');
       }
@@ -248,39 +299,44 @@ const Journal = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-950 via-black to-gray-900 text-white p-6">
       <div className="max-w-2xl mx-auto animate-fade-in-up">
-        <h1 className="text-3xl sm:text-4xl font-bold mb-6 text-center">My Journal</h1>
+        <h1 className="text-3xl sm:text-4xl font-serif text-white mb-2 text-center">My Journal</h1>
+        <p className="text-gray-400 italic text-center mb-6">A Nightly Reflection with Florence Nightingale</p>
         <button
           onClick={() => {
             localStorage.removeItem('token');
             setToken('');
             setPage(1);
           }}
-          className="mb-4 px-6 py-2 bg-red-600 hover:bg-red-700 rounded-full transition-colors font-medium shadow-lg"
+          className="mb-4 px-6 py-2 bg-gradient-to-r from-red-600 to-red-800 hover:from-red-700 hover:to-red-900 rounded-full transition-colors font-medium shadow-lg"
         >
           Logout
         </button>
 
-        <form onSubmit={handleAddEntry} className="mb-6">
+        {!hasJournaledToday && (
+          <p className="text-gray-400 italic text-center mb-4">Reflect on your day with Florence’s Light</p>
+        )}
+
+        <form onSubmit={handleAddEntry} className="mb-6 p-4 bg-gray-900 border border-gray-700 rounded-md shadow-md">
           <input
             type="text"
-            placeholder="Title"
+            placeholder="A title for your thoughts..."
             value={newEntry.title}
             onChange={(e) => setNewEntry({ ...newEntry, title: e.target.value })}
-            className="w-full p-2 mb-2 rounded-md bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full p-2 mb-2 rounded-md bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-yellow-300"
             required
           />
           <textarea
-            placeholder="Write your thoughts here..."
+            placeholder="What’s on your mind tonight?"
             value={newEntry.content}
             onChange={(e) => setNewEntry({ ...newEntry, content: e.target.value })}
-            className="w-full h-40 p-4 rounded-md bg-gray-800 text-white border border-gray-700 resize-none mb-4 shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full h-40 p-4 rounded-md bg-gray-800 text-white border border-gray-700 resize-none mb-4 shadow-md focus:outline-none focus:ring-2 focus:ring-yellow-300"
             required
           />
           <div className="flex justify-end">
             <button
               type="submit"
               disabled={loading}
-              className="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 rounded-full transition-colors font-medium shadow-lg disabled:opacity-50"
+              className="px-6 py-2 bg-gradient-to-r from-blue-900 to-yellow-600 hover:from-blue-800 hover:to-yellow-500 rounded-full transition-colors font-medium shadow-lg disabled:opacity-50"
             >
               {loading ? 'Saving...' : 'Add Entry'}
             </button>
@@ -299,12 +355,12 @@ const Journal = () => {
                       type="text"
                       value={editEntry.title}
                       onChange={(e) => setEditEntry({ ...editEntry, title: e.target.value })}
-                      className="w-full p-2 mb-2 rounded-md bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      className="w-full p-2 mb-2 rounded-md bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-300"
                     />
                     <textarea
                       value={editEntry.content}
                       onChange={(e) => setEditEntry({ ...editEntry, content: e.target.value })}
-                      className="w-full p-2 mb-2 rounded-md bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      className="w-full p-2 mb-2 rounded-md bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-300"
                     />
                     <button
                       onClick={() => handleUpdateEntry(entry.id)}
@@ -323,7 +379,14 @@ const Journal = () => {
                   <div>
                     <h3 className="text-xl font-semibold">{entry.title}</h3>
                     <p className="text-gray-300">{entry.content}</p>
-                    <p className="text-gray-400 text-sm"><small>{new Date(entry.created_at).toLocaleString()}</small></p>
+                    <p className="text-gray-400 text-sm italic"><small>{new Date(entry.created_at).toLocaleString()}</small></p>
+                    {entry.hasFeedback && (
+                      <div className="mt-2 p-2 bg-gray-700 border border-yellow-300 rounded-md">
+                        <p className="text-gray-200 font-semibold">Nightingale’s Wisdom:</p>
+                        <p className="text-gray-100">{entry.displayedFeedback}</p>
+                        {entry.isTyping && <span className="animate-pulse text-yellow-300">...</span>}
+                      </div>
+                    )}
                     <button
                       onClick={() => setEditEntry({ id: entry.id, title: entry.title, content: entry.content })}
                       className="mt-2 mr-2 px-4 py-1 bg-blue-600 hover:bg-blue-700 rounded-full transition-colors font-medium"
@@ -338,9 +401,11 @@ const Journal = () => {
                     </button>
                     <button
                       onClick={() => handleGetFeedback(entry.id)}
-                      className="mt-2 px-4 py-1 bg-indigo-600 hover:bg-indigo-700 rounded-full transition-colors font-medium"
+                      disabled={entry.hasFeedback}
+                      className="mt-2 px-4 py-1 bg-indigo-600 hover:bg-indigo-700 rounded-full transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                      title={entry.hasFeedback ? "Feedback Received" : "Request Nightingale's Wisdom"}
                     >
-                      Get AI Feedback
+                      Nightingale’s Wisdom
                     </button>
                   </div>
                 )}
@@ -353,15 +418,15 @@ const Journal = () => {
           <button
             onClick={handlePreviousPage}
             disabled={page === 1}
-            className="px-4 py-2 bg-gray-600 hover:bg-gray-700 rounded-full transition-colors font-medium disabled:opacity-50"
+            className="px-4 py-2 bg-gradient-to-r from-blue-900 to-purple-900 hover:from-blue-800 hover:to-purple-800 rounded-full transition-colors font-medium disabled:opacity-50"
           >
             Previous
           </button>
-          <span className="text-gray-400">Page {page}</span>
+          <span className="text-yellow-300 text-lg">Page {page}</span>
           <button
             onClick={handleNextPage}
             disabled={!hasMore}
-            className="px-4 py-2 bg-gray-600 hover:bg-gray-700 rounded-full transition-colors font-medium disabled:opacity-50"
+            className="px-4 py-2 bg-gradient-to-r from-blue-900 to-purple-900 hover:from-blue-800 hover:to-purple-800 rounded-full transition-colors font-medium disabled:opacity-50"
           >
             Next
           </button>
@@ -369,12 +434,6 @@ const Journal = () => {
 
         <div className="mt-8 p-4 bg-gray-800 border border-gray-700 rounded-md shadow-sm">
           {error && <p className="text-red-400">{error}</p>}
-          {!error && aiFeedback && (
-            <p className="text-gray-100">{aiFeedback}</p>
-          )}
-          {!aiFeedback && !error && (
-            <p className="text-gray-400 italic">AI feedback will appear here after submission.</p>
-          )}
         </div>
       </div>
     </div>
