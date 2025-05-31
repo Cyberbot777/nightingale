@@ -7,10 +7,10 @@
 
 ## Features
 - **Home & About Pages:** Smooth scroll experience, animated transitions, and a Florence Nightingale-inspired theme using Tailwind CSS.
-- **Journal Page:** Allows users to write and submit private journal entries with AI-generated feedback powered by OpenAI.
-- **Authentication System:** Includes user registration and login with JWT-based token security.
+- **Journal Page:** Allows users to write, edit, and delete private journal entries with AI-generated feedback powered by OpenAI. Features pagination and a collapsible entry view.
+- **Authentication System:** COMING SOON: Includes user registration; currently supports login with JWT-based token security.
 - **Access Control:** Protects AI functionality and routes behind authentication.
-- **Demo Account:** COMMING SOON! Provides a demo login (`demo/demo123!`) for recruiters or testing without registration.
+- **Demo Account:** Use the demo login (`demo@nightingale.ai` / `demo123!`) to test the app without registration.
 - **AI Rate Limiting:** Restricts users to 3 free AI feedback submissions to control OpenAI API usage.
 - **Responsive Design:** Fully mobile-optimized interface with consistent layout across screen sizes.
 - **Deployment & Hosting:** Backend is hosted with Render (including the PostgreSQL database), and frontend is deployed using Vercel.
@@ -43,18 +43,16 @@
 - Git/GitHub version control with remote push configuration
 - API integration with OpenAI and rate limiting
 - Debugging CORS, environment variables, and cloud hosting issues
+- State management with React hooks and context
+- Database migrations with Alembic for schema updates
 
 ## Usage Instructions
 1. **Access the Web App**:
    - Visit the live app: [https://nightingale-sigma.vercel.app](https://nightingale-sigma.vercel.app)
-   - Register or use the demo account (`demo/demo123!`) to log in.
-   - Navigate to the Journal page to write and submit an entry.
+   - Register or use the demo account (`demo@nightingale.ai` / `demo123!`) to log in.
+   - Navigate to the Journal page to write, edit, and submit an entry.
 
-2. **AI Feedback**:
-   - Submit a journal entry to receive reflective AI feedback.
-   - Each user has a limit of 3 free entries.
-
-3. **Development Setup**:
+2. **Development Setup**:
    - Clone the repository: `git clone https://github.com/Cyberbot777/nightingale.git`
    - Navigate to the backend and frontend folders to install dependencies.
    - Backend: `uvicorn main:app --reload`
@@ -66,4 +64,4 @@
 
 ## Date
 - Created: May 25, 2025  
-- Last Updated: May 30, 2025
+- Last Updated: May 31, 2025
