@@ -6,6 +6,7 @@ from app.config import settings
 from app.database import get_db
 from app.auth_utils import get_current_user  # Dependency to get current user
 from app import models
+from datetime import datetime  # Added for created_at in JournalEntryCreate
 
 router = APIRouter()
 
@@ -75,14 +76,16 @@ def create_journal_entry(
     db.refresh(db_entry)
     return db_entry
 
-# GET: Read journal entries
-@router.get("/journal", response_model=list[JournalEntryCreate])
-def read_journal_entries(
-    db: Session = Depends(get_db),
-    current_user: models.User = Depends(get_current_user)
+# GET: Read journal entries (Added from prior steps)
+@router.get("/journal")
+async def get_journal(
+    current_user: models.User = Depends(get_current_user),
+    db: Session = Depends(get_db)
 ):
     entries = db.query(models.JournalEntry).filter(models.JournalEntry.user_id == current_user.id).all()
-    return entries
+    if not entries:
+        raise HTTPException(status_code=404, detail="No journal entries found")
+    return [{"id": entry.id, "title": entry.title, "content": entry.content, "created_at": entry.created_at} for entry in entries]
 
 # PUT: Update a journal entry
 @router.put("/journal/{entry_id}", response_model=JournalEntryUpdate)
