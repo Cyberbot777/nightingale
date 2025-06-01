@@ -49,7 +49,7 @@
 ## Usage Instructions
 1. **Access the Web App**:
    - Visit the live app: [https://nightingale-sigma.vercel.app](https://nightingale-sigma.vercel.app)
-   - Register or use the demo account (`demo@nightingale.ai` / `demo123!`) to log in.
+   - Use the demo account (`demo@nightingale.ai` / `demo123!`) to log in.
    - Navigate to the Journal page to write, edit, and submit an entry.
 
 2. **Development Setup**:
