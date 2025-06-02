@@ -8,10 +8,9 @@ export default function Home() {
           Welcome to Nightingale
         </h1>
         <p className="text-sm sm:text-lg mb-6 text-white">
-          Reflect. Recharge. Write your thoughts.<br />
-          Let Nightingale guide your mind at dusk.
+          Reflect. Recharge. Write your thoughts.
         </p>
-        <button onClick={() => navigate('/login')} className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 transition-colors rounded-full text-sm sm:text-base font-medium shadow-lg hover:scale-105 transform duration-300">
+        <button onClick={() => navigate('/about')} className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 transition-colors rounded-full text-sm sm:text-base font-medium shadow-lg hover:scale-105 transform duration-300">
           Get Started
         </button>
       </div>
