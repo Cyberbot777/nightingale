@@ -7,10 +7,10 @@ const About = () => {
         <h1 className="text-3xl sm:text-4xl font-bold mb-4 tracking-tight leading-tight text-white">About Nightingale</h1>
         <div className="text-left">
           <p className="text-base sm:text-lg mb-6 text-white">
-            Inspired by Florence Nightingale’s legacy of care, Nightingale is your private self-care journaling companion. Backed by science—74% of people who journal report reduced stress and anxiety, while 77% say it aids in self-discovery (<a href="https://habitbetter.com/journaling-for-stress-and-anxiety/" className="text-indigo-400 hover:text-indigo-500 transition-colors" target="_blank" rel="noopener noreferrer">Habitbetter, 2020</a>)—our app offers a serene night-time experience with AI-powered reflections that provide personalized inspiration, making your journal feel like it truly listens.
+            Inspired by Florence Nightingale’s legacy of care, Nightingale is your private self-care journaling companion. Backed by science—74% of people who journal report reduced stress and anxiety, while 77% say it aids in self-discovery (<a href="https://habitbetter.com/journaling-for-stress-and-anxiety/" className="text-indigo-400 hover:text-indigo-500 transition-colors" target="_blank" rel="noopener noreferrer">Habitbetter, 2020</a>)—our app offers a serene night-time experience with AI-powered reflections that provide personalized inspiration, providing you with a journal that listens and cares.
           </p>
           <p className="text-base sm:text-lg mb-6 text-white">
-            So whether you’ve had a great day or a tough one, Nightingale is a secure space to reflect and grow. Start your self-care journey today.
+            So whether you’ve had a great day or a tough one, Nightingale is a secure and safe space to reflect and grow. Start your self-care journey today!
           </p>
         </div>
         <p className="text-white italic text-m mb-6 text-center">
