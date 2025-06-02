@@ -1,6 +1,7 @@
 # Nightingale
 
-**View Live Demo: [https://nightingale-sigma.vercel.app](https://nightingale-sigma.vercel.app)**
+**View Live Demo: [https://nightingale-sigma.vercel.app](https://nightingale-sigma.vercel.app)**  
+Use the demo login (`demo@nightingale.ai` / `demo123!`) to test the app without registration.
 
 ## Overview
 `Nightingale` is a full-stack journaling app that combines private reflection with AI-generated feedback. Built with React, FastAPI, and PostgreSQL, it offers a secure and elegant user experience with dark-themed aesthetics and modern functionality. The backend is hosted on Render with a managed PostgreSQL database, while the frontend is deployed via Vercel for fast, global delivery.
@@ -10,7 +11,6 @@
 - **Journal Page:** Allows users to write, edit, and delete private journal entries with AI-generated feedback powered by OpenAI. Features pagination and a collapsible entry view.
 - **Authentication System:** COMING SOON: Includes user registration; currently supports login with JWT-based token security.
 - **Access Control:** Protects AI functionality and routes behind authentication.
-- **Demo Account:** Use the demo login (`demo@nightingale.ai` / `demo123!`) to test the app without registration.
 - **AI Rate Limiting:** Restricts users to 3 free AI feedback submissions to control OpenAI API usage.
 - **Responsive Design:** Fully mobile-optimized interface with consistent layout across screen sizes.
 - **Deployment & Hosting:** Backend is hosted with Render (including the PostgreSQL database), and frontend is deployed using Vercel.
