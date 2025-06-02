@@ -2,34 +2,27 @@ import React from 'react';
 
 const About = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center px-6 bg-gradient-to-b from-gray-950 via-black to-gray-900 text-white">
-      <div className="text-center max-w-3xl animate-fade-in-up">
-        <h1 className="text-3xl sm:text-4xl font-bold mb-6">About Nightingale</h1>
-        <p className="text-base sm:text-lg mb-4">
-          Inspired by Florence Nightingale’s legacy of healing and care, Nightingale is a modern journaling app designed to help you reflect, unwind, and grow.
+    <div className="min-h-screen flex items-center justify-center px-4 bg-gradient-to-b from-gray-950 via-black to-gray-900 text-white">
+      <div className="text-center animate-fade-in-down max-w-xl">
+        <h1 className="text-3xl sm:text-4xl font-bold mb-4 tracking-tight leading-tight text-white">About Nightingale</h1>
+        <div className="text-left">
+          <p className="text-base sm:text-lg mb-6 text-white">
+            Inspired by Florence Nightingale’s legacy of care, Nightingale is your private self-care journaling companion. Backed by science—74% of people who journal report reduced stress and anxiety, while 77% say it aids in self-discovery (<a href="https://habitbetter.com/journaling-for-stress-and-anxiety/" className="text-indigo-400 hover:text-indigo-500 transition-colors" target="_blank" rel="noopener noreferrer">Habitbetter, 2020</a>)—our app offers a serene night-time experience with AI-powered reflections that provide personalized inspiration, making your journal feel like it truly listens.
+          </p>
+          <p className="text-base sm:text-lg mb-6 text-white">
+            So whether you’ve had a great day or a tough one, Nightingale is a secure space to reflect and grow. Start your self-care journey today.
+          </p>
+        </div>
+        <p className="text-white italic text-m mb-6 text-center">
+          “Our first journey is to find that special place for us.” – Florence Nightingale
         </p>
-        <p className="text-base sm:text-lg mb-4">
-          Backed by research showing that journaling can reduce stress, improve mood, and increase emotional clarity, Nightingale offers a serene night-time writing experience.
-        </p>
-        <p className="text-base sm:text-lg mb-6">
-          Our AI-powered reflections offer personalized inspiration based on your entries — making your journal feel like it listens and cares.
-        </p>
-        <p className="italic text-sm text-gray-400">
-          “Live life when you have it. Life is a splendid gift — there is nothing small in it.” – Florence Nightingale
-        </p>
-        <p className="text-base sm:text-lg mt-6">
+        <p className="text-gray-400 text-sm mb-1 text-center">
           **Registration Coming Soon**
         </p>
-        <p className="text-base sm:text-lg mt-3">
-          Login is under Usage Instructions on GitHub:
+        <p className="text-gray-400 text-sm mb-4 text-center">
+          Demo login is in README on GitHub:<br />
+          <a href="https://github.com/Cyberbot777/nightingale" className="text-indigo-400 hover:text-indigo-500 transition-colors" target="_blank" rel="noopener noreferrer">https://github.com/Cyberbot777/nightingale</a>
         </p>
-        <a
-          className="text-base sm:text-lg mb-6 text-blue-600 hover:underline cursor-pointer"
-          href="https://github.com/Cyberbot777/nightingale"
-          target="_blank"
-        >
-          https://github.com/Cyberbot777/nightingale
-        </a>
       </div>
     </div>
   );
