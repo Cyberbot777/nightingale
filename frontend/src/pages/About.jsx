@@ -12,11 +12,24 @@ const About = () => {
           Backed by research showing that journaling can reduce stress, improve mood, and increase emotional clarity, Nightingale offers a serene night-time writing experience.
         </p>
         <p className="text-base sm:text-lg mb-6">
-          Soon, our AI-powered reflections will offer personalized inspiration based on your entries — making your journal feel like it listens and cares.
+          Our AI-powered reflections offer personalized inspiration based on your entries — making your journal feel like it listens and cares.
         </p>
         <p className="italic text-sm text-gray-400">
           “Live life when you have it. Life is a splendid gift — there is nothing small in it.” – Florence Nightingale
         </p>
+        <p className="text-base sm:text-lg mt-6">
+          **Registration Coming Soon**
+        </p>
+        <p className="text-base sm:text-lg mt-3">
+          Login is under Usage Instructions on GitHub:
+        </p>
+        <a
+          className="text-base sm:text-lg mb-6 text-blue-600 hover:underline cursor-pointer"
+          href="https://github.com/Cyberbot777/nightingale"
+          target="_blank"
+        >
+          https://github.com/Cyberbot777/nightingale
+        </a>
       </div>
     </div>
   );

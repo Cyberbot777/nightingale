@@ -1,4 +1,6 @@
+import { useNavigate } from 'react-router-dom';
 export default function Home() {
+  const navigate = useNavigate();
   return (
     <div className="min-h-screen flex items-center justify-center px-4 bg-gradient-to-b from-gray-950 via-black to-gray-900">
       <div className="text-center animate-fade-in-down max-w-xl text-white">
@@ -9,7 +11,7 @@ export default function Home() {
           Reflect. Recharge. Write your thoughts.<br />
           Let Nightingale guide your mind at dusk.
         </p>
-        <button className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 transition-colors rounded-full text-sm sm:text-base font-medium shadow-lg hover:scale-105 transform duration-300">
+        <button onClick={() => navigate('/login')} className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 transition-colors rounded-full text-sm sm:text-base font-medium shadow-lg hover:scale-105 transform duration-300">
           Get Started
         </button>
       </div>

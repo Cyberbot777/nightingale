@@ -24,7 +24,7 @@ export default function Navbar({ token, setToken }) {
           ) : (
             <>
               <Link to="/login" className="hover:text-indigo-400 transition-colors duration-200">Login</Link>
-              <Link to="/register" className="hover:text-indigo-400 transition-colors duration-200">Register</Link>
+              {/* <Link to="/register" className="hover:text-indigo-400 transition-colors duration-200">Register</Link> */}
             </>
           )}
         </div>
