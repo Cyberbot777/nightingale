@@ -20,8 +20,8 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:5173",
-        "https://nightingale-sigma.vercel.app"
-        "https://nightingaleapp.ai"
+        "https://nightingale-sigma.vercel.app",
+        "https://www.nightingaleapp.ai"
     ],
     allow_credentials=True,
     allow_methods=["*"],
