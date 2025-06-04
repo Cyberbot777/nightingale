@@ -10,7 +10,6 @@
 - **Journal Page:** Allows users to write, edit, and delete private journal entries with AI-generated feedback powered by OpenAI. Features pagination and a collapsible entry view.
 - **Authentication System:** COMING SOON: Includes user registration; currently supports login with JWT-based token security.
 - **Access Control:** Protects AI functionality and routes behind authentication.
-- **Demo Account:** Use the demo login (`demo@nightingale.ai` / `demo123!`) to test the app without registration.
 - **AI Rate Limiting:** Restricts users to 3 free AI feedback submissions to control OpenAI API usage.
 - **Responsive Design:** Fully mobile-optimized interface with consistent layout across screen sizes.
 - **Deployment & Hosting:** Backend is hosted with Render (including the PostgreSQL database), and frontend is deployed using Vercel.
