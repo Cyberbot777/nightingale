@@ -1,6 +1,6 @@
 # Nightingale
 
-**View Live Demo: [https://nightingale-sigma.vercel.app](https://nightingale-sigma.vercel.app)**
+**View Live Demo: [https://nightingaleapp.ai](https://nightingaleapp.ai)**
 
 ## Overview
 `Nightingale` is a full-stack journaling app that combines private reflection with AI-generated feedback. Built with React, FastAPI, and PostgreSQL, it offers a secure and elegant user experience with dark-themed aesthetics and modern functionality. The backend is hosted on Render with a managed PostgreSQL database, while the frontend is deployed via Vercel for fast, global delivery.
@@ -48,7 +48,7 @@
 
 ## Usage Instructions
 1. **Access the Web App**:
-   - Visit the live app: [https://nightingale-sigma.vercel.app](https://nightingale-sigma.vercel.app)
+   - Visit the live app: [https://nightingaleapp.ai](https://nightingaleapp.ai)
    - Use the demo account (`demo@nightingale.ai` / `demo123!`) to log in.
    - Navigate to the Journal page to write, edit, and submit an entry.
 
@@ -64,4 +64,4 @@
 
 ## Date
 - Created: May 25, 2025  
-- Last Updated: May 31, 2025
+- Last Updated: June 4, 2025

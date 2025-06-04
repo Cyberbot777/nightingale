@@ -256,7 +256,7 @@ const Journal = ({ token, setToken }) => {
       <div className="max-w-2xl mx-auto animate-fade-in-up">
         <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2 text-center">My Journal</h1>
 
-        {!hasJournaledToday && (
+        {hasJournaledToday && (
           <p className="text-gray-400 italic text-sm mb-4 text-center">Reflect on your day with Nightingale's Wisdom</p>
         )}
 
