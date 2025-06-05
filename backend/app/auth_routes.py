@@ -90,6 +90,8 @@ def login_json(
     data: dict = Body(...),
     db: Session = Depends(get_db)
 ):
+    print("GPT login payload:", data)  # <- log incoming body
+    
     username = data.get("username")
     password = data.get("password")
 
