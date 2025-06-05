@@ -13,6 +13,38 @@ journal_router = APIRouter()
 
 client = openai.OpenAI(api_key=settings.openai_api_key)
 
+# ✅ FIXED: search moved before get/{id} and renamed for clarity
+@journal_router.get("/journal-search")
+def search_journals(
+    q: str = Query(default=None),
+    title: str = Query(default=None),
+    date: str = Query(default=None),
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user)
+):
+    query = db.query(models.JournalEntry).filter(models.JournalEntry.user_id == current_user.id)
+
+    if q:
+        query = query.filter(models.JournalEntry.content.ilike(f"%{q}%"))
+    if title:
+        query = query.filter(models.JournalEntry.title.ilike(f"%{title}%"))
+    if date:
+        query = query.filter(models.JournalEntry.created_at.startswith(date))
+
+    results = query.all()
+
+    return [
+        {
+            "id": entry.id,
+            "title": entry.title,
+            "content": entry.content,
+            "feedback": entry.feedback,
+            "created_at": entry.created_at
+        }
+        for entry in results
+    ]
+
+
 # CREATE
 @journal_router.post("/journal")
 def create_journal_entry(
@@ -124,7 +156,7 @@ def ai_feedback(
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-# GET: Get journal entry by ID
+# GET BY ID (must come after /journal-search)
 @journal_router.get("/journal/{entry_id}")
 def get_journal_by_id(
     entry_id: int,
@@ -146,34 +178,3 @@ def get_journal_by_id(
         "feedback": entry.feedback,
         "created_at": entry.created_at
     }
-
-
-@journal_router.get("/journal/search")
-def search_journals(
-    q: str = Query(default=None),
-    title: str = Query(default=None),
-    date: str = Query(default=None),
-    db: Session = Depends(get_db),
-    current_user: models.User = Depends(get_current_user)
-):
-    query = db.query(models.JournalEntry).filter(models.JournalEntry.user_id == current_user.id)
-
-    if q:
-        query = query.filter(models.JournalEntry.content.ilike(f"%{q}%"))
-    if title:
-        query = query.filter(models.JournalEntry.title.ilike(f"%{title}%"))
-    if date:
-        query = query.filter(models.JournalEntry.created_at.startswith(date))
-
-    results = query.all()
-
-    return [
-        {
-            "id": entry.id,
-            "title": entry.title,
-            "content": entry.content,
-            "feedback": entry.feedback,
-            "created_at": entry.created_at
-        }
-        for entry in results
-    ]
