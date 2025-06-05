@@ -24,6 +24,7 @@ def create_journal_entry(
     db_entry = models.JournalEntry(
         title=entry.title,
         content=entry.content,
+        feedback=entry.feedback,  
         user_id=current_user.id,
         created_at=datetime.utcnow()
     )
@@ -37,6 +38,7 @@ def create_journal_entry(
         "feedback": db_entry.feedback,
         "created_at": db_entry.created_at
     }
+
 
 # LIST ALL (Paginated)
 @journal_router.get("/journal")
