@@ -22,7 +22,10 @@ def hash_password(password: str):
     return pwd_context.hash(password)
 
 def verify_password(plain_password, hashed_password):
-    return pwd_context.verify(plain_password, hashed_password)
+    try:
+        return pwd_context.verify(plain_password.strip(), hashed_password.strip())
+    except Exception:
+        return False
 
 def create_access_token(data: dict, expires_delta: timedelta = None):
     to_encode = data.copy()
@@ -55,7 +58,7 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail="Email already registered")
 
     hashed_pw = hash_password(user.password)
-    new_user = models.User(email=user.email, hashed_password=hashed_pw)
+    new_user = models.User(email=user.email.strip(), hashed_password=hashed_pw)
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
@@ -63,13 +66,11 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
 
 @auth_router.post("/login", response_model=Token)
 def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
-    from datetime import timedelta
+    db_user = db.query(models.User).filter(models.User.email == form_data.username.strip()).first()
 
-    db_user = db.query(models.User).filter(models.User.email == form_data.username).first()
     if not db_user or not verify_password(form_data.password, db_user.hashed_password):
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
-    # 🧠 If it's the GPT user, give it a 30-day token
     if db_user.email == "gpt@nightingale.ai":
         token = create_access_token(data={"user_id": db_user.id}, expires_delta=timedelta(days=30))
     else:
