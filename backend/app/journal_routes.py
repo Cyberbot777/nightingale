@@ -123,3 +123,57 @@ def ai_feedback(
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+# GET: Get journal entry by ID
+@journal_router.get("/journal/{entry_id}")
+def get_journal_by_id(
+    entry_id: int,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user)
+):
+    entry = db.query(models.JournalEntry).filter(
+        models.JournalEntry.id == entry_id,
+        models.JournalEntry.user_id == current_user.id
+    ).first()
+
+    if not entry:
+        raise HTTPException(status_code=404, detail="Journal entry not found")
+
+    return {
+        "id": entry.id,
+        "title": entry.title,
+        "content": entry.content,
+        "feedback": entry.feedback,
+        "created_at": entry.created_at
+    }
+
+# GET: Search journal entries by q/title/date
+@journal_router.get("/journal/search")
+def search_journals(
+    q: str = "",
+    title: str = "",
+    date: str = "",
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user)
+):
+    query = db.query(models.JournalEntry).filter(models.JournalEntry.user_id == current_user.id)
+
+    if q:
+        query = query.filter(models.JournalEntry.content.ilike(f"%{q}%"))
+    if title:
+        query = query.filter(models.JournalEntry.title.ilike(f"%{title}%"))
+    if date:
+        query = query.filter(models.JournalEntry.created_at.startswith(date))
+
+    results = query.all()
+
+    return [
+        {
+            "id": entry.id,
+            "title": entry.title,
+            "content": entry.content,
+            "feedback": entry.feedback,
+            "created_at": entry.created_at
+        }
+        for entry in results
+    ]
