@@ -1,10 +1,7 @@
-# backend/app/models.py
 from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from datetime import datetime
-
-Base = declarative_base()
+from app.database import Base  # ✅ Pull Base from your central database setup
 
 # User model
 class User(Base):
@@ -18,14 +15,15 @@ class User(Base):
     # Relationship to journal entries
     entries = relationship("JournalEntry", back_populates="owner")
 
+
 # JournalEntry model
 class JournalEntry(Base):
     __tablename__ = "journal_entries"
 
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String, index=True)
-    content = Column(Text)
-    feedback = Column(String, nullable=True)  
+    content = Column(Text, nullable=False)
+    feedback = Column(String, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
 

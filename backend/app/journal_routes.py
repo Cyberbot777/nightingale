@@ -1,16 +1,25 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from datetime import datetime
 from app.database import get_db
 from app import models
 from app.auth_utils import get_current_user
-from datetime import datetime
+from pydantic import BaseModel
 
 journal_router = APIRouter()
 
+# Request schema
+class JournalCreate(BaseModel):
+    content: str
+
 @journal_router.post("/journal")
-def create_journal(content: dict, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
+def create_journal(
+    journal: JournalCreate,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user)
+):
     entry = models.JournalEntry(
-        content=content["content"],
+        content=journal.content,
         user_id=current_user.id,
         created_at=datetime.utcnow()
     )
@@ -20,7 +29,11 @@ def create_journal(content: dict, db: Session = Depends(get_db), current_user: m
     return {"entry_id": entry.id}
 
 @journal_router.post("/ai-feedback")
-def get_ai_feedback(entry_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
+def get_ai_feedback(
+    entry_id: int,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user)
+):
     entry = db.query(models.JournalEntry).filter(
         models.JournalEntry.id == entry_id,
         models.JournalEntry.user_id == current_user.id
