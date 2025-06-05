@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm  # Added OAuth2PasswordRequestForm
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from passlib.context import CryptContext
 from jose import JWTError, jwt
@@ -12,15 +12,12 @@ from app.config import settings
 auth_router = APIRouter()
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-# Config values
 SECRET_KEY = settings.secret_key
 ALGORITHM = settings.algorithm
 ACCESS_TOKEN_EXPIRE_MINUTES = settings.access_token_expire_minutes
 
-# OAuth2 scheme for token validation
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
-# Utility: Hashing
 def hash_password(password: str):
     return pwd_context.hash(password)
 
@@ -51,7 +48,6 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db: Session = De
         raise credentials_exception
     return user
 
-# POST /register
 @auth_router.post("/register", response_model=UserOut)
 def register(user: UserCreate, db: Session = Depends(get_db)):
     db_user = db.query(models.User).filter(models.User.email == user.email).first()
@@ -65,12 +61,18 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
     db.refresh(new_user)
     return new_user
 
-# POST /login
 @auth_router.post("/login", response_model=Token)
 def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+    from datetime import timedelta
+
     db_user = db.query(models.User).filter(models.User.email == form_data.username).first()
     if not db_user or not verify_password(form_data.password, db_user.hashed_password):
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
-    access_token = create_access_token(data={"user_id": db_user.id})
-    return {"access_token": access_token, "token_type": "bearer"}
+    # 🧠 If it's the GPT user, give it a 30-day token
+    if db_user.email == "gpt@nightingale.ai":
+        token = create_access_token(data={"user_id": db_user.id}, expires_delta=timedelta(days=30))
+    else:
+        token = create_access_token(data={"user_id": db_user.id})
+
+    return {"access_token": token, "token_type": "bearer"}
