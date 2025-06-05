@@ -20,13 +20,13 @@ def create_journal_entry(
     db: Session = Depends(get_db),
     current_user: models.User = Depends(get_current_user)
 ):
-    db_entry = models.JournalEntry(
-        title=entry.title,
-        content=entry.content,
+    entry = models.JournalEntry(
+        content=journal.content,
         user_id=current_user.id,
         created_at=datetime.utcnow()
+        created_at=datetime.utcnow()
     )
-    db.add(db_entry)
+    db.add(entry)
     db.commit()
     db.refresh(db_entry)
     return {

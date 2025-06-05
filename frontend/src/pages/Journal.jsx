@@ -282,17 +282,13 @@ const Journal = ({ token, setToken }) => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-950 via-black to-gray-900 text-white p-6">
       <div className="max-w-2xl mx-auto animate-fade-in-up">
-        <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2 text-center">
-          My Journal
-        </h1>
-        <p className="text-gray-400 italic text-sm mb-4 text-center">
-          Reflect on your day with Nightingale's Wisdom
-        </p>
-      
-        <form
-          onSubmit={handleAddEntry}
-          className="mb-6 p-4 bg-gray-900 border border-gray-700 rounded-md shadow-md"
-        >
+        <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2 text-center">My Journal</h1>
+
+        {hasJournaledToday && (
+          <p className="text-gray-400 italic text-sm mb-4 text-center">Reflect on your day with Nightingale's Wisdom</p>
+        )}
+
+        <form onSubmit={handleAddEntry} className="mb-6 p-4 bg-gray-900 border border-gray-700 rounded-md shadow-md">
           <input
             type="text"
             placeholder="A title for your thoughts..."

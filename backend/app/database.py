@@ -1,28 +1,25 @@
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-import os
-from dotenv import load_dotenv
+from app.config import settings  # Use your Settings object instead of os.getenv
 
-# Load environment variables from .env
-load_dotenv()
-print("DATABASE_URL loaded:", os.getenv("DATABASE_URL"))
+# Log the DB URL (optional for debugging)
+print("DATABASE_URL loaded:", settings.database_url)
 
-# Read the database URL
-DATABASE_URL = os.getenv("DATABASE_URL")
+# Use the value directly from settings
+DATABASE_URL = settings.database_url
 
-# Set up database engine and session
+# Set up SQLAlchemy engine and session
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 # Base class for models
 Base = declarative_base()
 
-# Dependency to get DB session
+# Dependency to get a DB session
 def get_db():
     db = SessionLocal()
     try:
         yield db
     finally:
         db.close()
-

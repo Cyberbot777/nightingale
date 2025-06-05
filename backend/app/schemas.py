@@ -10,13 +10,13 @@ class UserOut(BaseModel):
     email: EmailStr
 
     class Config:
-        orm_mode = True
+        orm_mode = True  # Allow Pydantic to work with SQLAlchemy models
 
 class Token(BaseModel):
     access_token: str
     token_type: str
 
+# Journal entry input schema
 class EntryCreate(BaseModel):
     title: str
     content: str
-
