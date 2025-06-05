@@ -8,6 +8,7 @@ from datetime import datetime
 from typing import List
 import openai
 from app.config import settings
+from fastapi import Body
 
 journal_router = APIRouter()
 
@@ -124,6 +125,7 @@ def ai_feedback(
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     
+
 @journal_router.get("/journal/search")
 def search_journals(
     q: str = Query(default=None),
@@ -168,6 +170,38 @@ def get_journal_by_id(
 
     if not entry:
         raise HTTPException(status_code=404, detail="Journal entry not found")
+
+    return {
+        "id": entry.id,
+        "title": entry.title,
+        "content": entry.content,
+        "feedback": entry.feedback,
+        "created_at": entry.created_at
+    }
+
+
+# PUT: Update an existing journal entry by ID
+@journal_router.put("/journal/{entry_id}")
+def update_journal_entry(
+    entry_id: int,
+    updated_entry: EntryCreate = Body(...),
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user)
+):
+    entry = db.query(models.JournalEntry).filter(
+        models.JournalEntry.id == entry_id,
+        models.JournalEntry.user_id == current_user.id
+    ).first()
+
+    if not entry:
+        raise HTTPException(status_code=404, detail="Journal entry not found")
+
+    entry.title = updated_entry.title
+    entry.content = updated_entry.content
+    entry.feedback = updated_entry.feedback
+
+    db.commit()
+    db.refresh(entry)
 
     return {
         "id": entry.id,
