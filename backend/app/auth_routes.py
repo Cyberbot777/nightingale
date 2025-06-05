@@ -13,7 +13,7 @@ auth_router = APIRouter()
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # Config values
-SECRET_KEY = settin.gssecret_key
+SECRET_KEY = setting.gssecret_key
 ALGORITHM = settings.algorithm
 ACCESS_TOKEN_EXPIRE_MINUTES = settings.access_token_expire_minutes
 
