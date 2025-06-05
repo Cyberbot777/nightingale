@@ -8,7 +8,7 @@ from app.database import get_db
 from app import models
 from app.schemas import UserCreate, UserOut, Token
 from app.config import settings
- from fastapi import Body
+from fastapi import Body
 
 auth_router = APIRouter()
 
