@@ -1,4 +1,4 @@
-# backend/app/main.py (Updated with feedback limit)
+# backend/app/main.py
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
@@ -41,43 +41,9 @@ def get_db():
     finally:
         db.close()
 
-# Pydantic model for journal input
+# Pydantic model for journal input (still used in journal_routes)
 class JournalCreate(BaseModel):
     content: str
-
-# Update journal route with auth
-@app.post("/journal")
-async def create_journal(
-    journal: JournalCreate,
-    current_user: models.User = Depends(get_current_user),
-    db: Session = Depends(get_db)
-):
-    entry = models.JournalEntry(content=journal.content, user_id=current_user.id)
-    db.add(entry)
-    db.commit()
-    db.refresh(entry)
-    return {"entry_id": entry.id}
-
-# Update AI feedback route with limit
-@app.post("/ai-feedback")
-async def get_ai_feedback(
-    entry_id: int,
-    current_user: models.User = Depends(get_current_user),
-    db: Session = Depends(get_db)
-):
-    if current_user.email != "demo@nightingale.ai":
-        if current_user.feedback_count >= 3:
-            raise HTTPException(status_code=403, detail="Feedback limit reached")
-        current_user.feedback_count += 1
-        db.commit()
-    entry = db.query(models.JournalEntry).filter(
-        models.JournalEntry.id == entry_id,
-        models.JournalEntry.user_id == current_user.id
-    ).first()
-    if not entry:
-        raise HTTPException(status_code=404, detail="Entry not found")
-    feedback = f"Great job: {entry.content[:50]}..."
-    return {"feedback": feedback}
 
 @app.get("/")
 def read_root():
