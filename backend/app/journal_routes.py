@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app import models
 from app.auth_routes import get_current_user
-from app.schemas import EntryCreate  # ✅ imported from your existing schemas
+from app.schemas import EntryCreate
 from datetime import datetime
 from typing import List
 import openai
@@ -20,13 +20,13 @@ def create_journal_entry(
     db: Session = Depends(get_db),
     current_user: models.User = Depends(get_current_user)
 ):
-    entry = models.JournalEntry(
-        content=journal.content,
+    db_entry = models.JournalEntry(
+        title=entry.title,
+        content=entry.content,
         user_id=current_user.id,
         created_at=datetime.utcnow()
-        created_at=datetime.utcnow()
     )
-    db.add(entry)
+    db.add(db_entry)
     db.commit()
     db.refresh(db_entry)
     return {
@@ -86,7 +86,10 @@ def ai_feedback(
     db: Session = Depends(get_db),
     current_user: models.User = Depends(get_current_user)
 ):
-    if current_user.email != "demo@nightingale.ai" and current_user.feedback_count >= 3:
+    is_demo = current_user.email == "demo@nightingale.ai"
+    has_reached_limit = current_user.feedback_count >= 3
+
+    if not is_demo and has_reached_limit:
         raise HTTPException(status_code=403, detail="AI feedback limit reached (3/3)")
 
     entry = db.query(models.JournalEntry).filter(
@@ -110,7 +113,7 @@ def ai_feedback(
         feedback = response.choices[0].message.content
         entry.feedback = feedback
 
-        if current_user.email != "demo@nightingale.ai":
+        if not is_demo:
             current_user.feedback_count += 1
 
         db.commit()
