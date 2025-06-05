@@ -1,4 +1,5 @@
 from pydantic import BaseModel, EmailStr
+from typing import Optional
 
 # User registration and login schemas
 class UserCreate(BaseModel):
@@ -10,7 +11,7 @@ class UserOut(BaseModel):
     email: EmailStr
 
     class Config:
-        orm_mode = True  # Allow Pydantic to work with SQLAlchemy models
+        orm_mode = True 
 
 class Token(BaseModel):
     access_token: str
@@ -20,3 +21,4 @@ class Token(BaseModel):
 class EntryCreate(BaseModel):
     title: str
     content: str
+    feedback: Optional[str] = None
