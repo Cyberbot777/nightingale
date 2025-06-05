@@ -147,12 +147,12 @@ def get_journal_by_id(
         "created_at": entry.created_at
     }
 
-# GET: Search journal entries by q/title/date
+
 @journal_router.get("/journal/search")
 def search_journals(
-    q: str = "",
-    title: str = "",
-    date: str = "",
+    q: str = Query(default=None),
+    title: str = Query(default=None),
+    date: str = Query(default=None),
     db: Session = Depends(get_db),
     current_user: models.User = Depends(get_current_user)
 ):
