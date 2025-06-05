@@ -63,7 +63,7 @@ def get_journals(
         for entry in entries
     ]
 
-# DELETE
+# DELETE Journal Entry
 @journal_router.delete("/journal/{entry_id}")
 def delete_journal_entry(
     entry_id: int,
@@ -127,7 +127,7 @@ def ai_feedback(
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     
-
+# SEARCH Journal
 @journal_router.get("/journal/search")
 def search_journals(
     q: str = Query(default=None),

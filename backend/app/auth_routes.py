@@ -8,8 +8,10 @@ from app.database import get_db
 from app import models
 from app.schemas import UserCreate, UserOut, Token
 from app.config import settings
+ from fastapi import Body
 
 auth_router = APIRouter()
+
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 SECRET_KEY = settings.secret_key
@@ -51,6 +53,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db: Session = De
         raise credentials_exception
     return user
 
+# Registration
 @auth_router.post("/register", response_model=UserOut)
 def register(user: UserCreate, db: Session = Depends(get_db)):
     db_user = db.query(models.User).filter(models.User.email == user.email).first()
@@ -64,6 +67,7 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
     db.refresh(new_user)
     return new_user
 
+# OAuth2 password grant login
 @auth_router.post("/login", response_model=Token)
 def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     db_user = db.query(models.User).filter(models.User.email == form_data.username.strip()).first()
@@ -77,3 +81,30 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
         token = create_access_token(data={"user_id": db_user.id})
 
     return {"access_token": token, "token_type": "bearer"}
+
+from fastapi import Body
+
+#JSON login
+@auth_router.post("/login-json", response_model=Token)
+def login_json(
+    data: dict = Body(...),
+    db: Session = Depends(get_db)
+):
+    username = data.get("username")
+    password = data.get("password")
+
+    if not username or not password:
+        raise HTTPException(status_code=400, detail="Missing username or password")
+
+    db_user = db.query(models.User).filter(models.User.email == username.strip()).first()
+
+    if not db_user or not verify_password(password, db_user.hashed_password):
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+
+    if db_user.email == "gpt2@nightingale.ai":
+        token = create_access_token(data={"user_id": db_user.id}, expires_delta=timedelta(days=30))
+    else:
+        token = create_access_token(data={"user_id": db_user.id})
+
+    return {"access_token": token, "token_type": "bearer"}
+
