@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Depends, Query
+from fastapi import APIRouter, HTTPException, Depends, Query, Body
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app import models
@@ -8,7 +8,6 @@ from datetime import datetime
 from typing import List
 import openai
 from app.config import settings
-from fastapi import Body
 
 journal_router = APIRouter()
 
@@ -24,7 +23,7 @@ def create_journal_entry(
     db_entry = models.JournalEntry(
         title=entry.title,
         content=entry.content,
-        feedback=entry.feedback,  
+        feedback=entry.feedback,
         user_id=current_user.id,
         created_at=datetime.utcnow()
     )
@@ -38,7 +37,6 @@ def create_journal_entry(
         "feedback": db_entry.feedback,
         "created_at": db_entry.created_at
     }
-
 
 # LIST ALL (Paginated)
 @journal_router.get("/journal")
@@ -89,11 +87,12 @@ def ai_feedback(
     db: Session = Depends(get_db),
     current_user: models.User = Depends(get_current_user)
 ):
-    is_demo = current_user.email == "demo@nightingale.ai"
-    has_reached_limit = current_user.feedback_count >= 3
+    # Rate limiting is temporarily disabled for demo/testing
+    # is_demo = current_user.email == "demo@nightingale.ai"
+    # has_reached_limit = current_user.feedback_count >= 3
 
-    if not is_demo and has_reached_limit:
-        raise HTTPException(status_code=403, detail="AI feedback limit reached (3/3)")
+    # if not is_demo and has_reached_limit:
+    #     raise HTTPException(status_code=403, detail="AI feedback limit reached (3/3)")
 
     entry = db.query(models.JournalEntry).filter(
         models.JournalEntry.id == entry_id,
@@ -116,8 +115,8 @@ def ai_feedback(
         feedback = response.choices[0].message.content
         entry.feedback = feedback
 
-        if not is_demo:
-            current_user.feedback_count += 1
+        # if not is_demo:
+        #     current_user.feedback_count += 1
 
         db.commit()
         db.refresh(entry)
@@ -126,7 +125,7 @@ def ai_feedback(
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-    
+
 # SEARCH Journal
 @journal_router.get("/journal/search")
 def search_journals(
@@ -158,7 +157,7 @@ def search_journals(
         for entry in results
     ]
 
-# GET: Get journal entry by ID
+# GET Journal by ID
 @journal_router.get("/journal/{entry_id}")
 def get_journal_by_id(
     entry_id: int,
@@ -181,8 +180,7 @@ def get_journal_by_id(
         "created_at": entry.created_at
     }
 
-
-# PUT: Update an existing journal entry by ID
+# UPDATE Journal by ID
 @journal_router.put("/journal/{entry_id}")
 def update_journal_entry(
     entry_id: int,
