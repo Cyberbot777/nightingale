@@ -4,8 +4,11 @@ import { useNavigate } from "react-router-dom";
 export default function Register({ setToken }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -40,7 +43,14 @@ export default function Register({ setToken }) {
       const loginData = await loginRes.json();
       localStorage.setItem("token", loginData.access_token);
       setToken(loginData.access_token);
-      navigate("/journal");
+
+      // ✅ Show success message
+      setSuccess("Account created! Logging you in...");
+
+      // ⏳ Wait before redirecting so user sees the message
+      setTimeout(() => {
+        navigate("/journal");
+      }, 1200);
     } catch (err) {
       setError(err.message);
     }
@@ -55,6 +65,13 @@ export default function Register({ setToken }) {
         <p className="text-sm text-gray-400 mb-6 text-center">
           Join Nightingale and start reflecting nightly.
         </p>
+
+        {success && (
+          <div className="mb-4 text-center text-green-400 font-medium animate-fade-in-up transition-opacity duration-500">
+            {success}
+          </div>
+        )}
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm mb-1" htmlFor="email">
@@ -65,40 +82,64 @@ export default function Register({ setToken }) {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-4 py-2 bg-gray-800 autofill:bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
               placeholder="you@example.com"
               required
             />
           </div>
+
+          {/* Password Field with Eye */}
           <div>
             <label className="block text-sm mb-1" htmlFor="password">
               Password
             </label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              placeholder="Create a password"
-              required
-            />
+            <div className="relative">
+              <input
+                id="password"
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-4 py-2 pr-10 bg-gray-800 autofill:bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                placeholder="Create a password"
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-2 flex items-center text-gray-400 hover:text-white"
+              >
+                {showPassword ? "🔒" : "👁️"}
+              </button>
+            </div>
           </div>
+
+          {/* Confirm Password Field with Eye */}
           <div>
             <label className="block text-sm mb-1" htmlFor="confirmPassword">
               Confirm Password
             </label>
-            <input
-              id="confirmPassword"
-              type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full px-4 py-2 bg-gray-800 autofill:bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              placeholder="Repeat your password"
-              required
-            />
+            <div className="relative">
+              <input
+                id="confirmPassword"
+                type={showConfirmPassword ? "text" : "password"}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className="w-full px-4 py-2 pr-10 bg-gray-800 autofill:bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                placeholder="Repeat your password"
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute inset-y-0 right-2 flex items-center text-gray-400 hover:text-white"
+              >
+                {showConfirmPassword ? "🔒" : "👁️"}
+              </button>
+            </div>
           </div>
+
           {error && <p className="text-red-400 text-sm">{error}</p>}
+
           <button
             type="submit"
             className="w-full py-2 bg-indigo-600 hover:bg-indigo-700 rounded-full font-medium transition-colors"
