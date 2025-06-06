@@ -1,66 +1,97 @@
 # Nightingale
 
-**View Live Demo: [https://nightingaleapp.ai](https://nightingaleapp.ai)**
+**View Live Demo:** [https://nightingaleapp.ai](https://nightingaleapp.ai)  
+**Demo Login:** `demo@nightingale.ai` / `demo123!`  
+**Nightingale GPT Link (via navbar):** Accessible from the "AI Companion" link on the navigation bar
 
 ## Overview
+
 `Nightingale` is a full-stack journaling app that combines private reflection with AI-generated feedback. Built with React, FastAPI, and PostgreSQL, it offers a secure and elegant user experience with dark-themed aesthetics and modern functionality. The backend is hosted on Render with a managed PostgreSQL database, while the frontend is deployed via Vercel for fast, global delivery.
 
 ## Features
-- **Home & About Pages:** Smooth scroll experience, animated transitions, and a Florence Nightingale-inspired theme using Tailwind CSS.
-- **Journal Page:** Allows users to write, edit, and delete private journal entries with AI-generated feedback powered by OpenAI. Features pagination and a collapsible entry view.
-- **Authentication System:** COMING SOON: Includes user registration; currently supports login with JWT-based token security.
-- **Access Control:** Protects AI functionality and routes behind authentication.
-- **AI Rate Limiting:** Restricts users to 3 free AI feedback submissions to control OpenAI API usage.
-- **Responsive Design:** Fully mobile-optimized interface with consistent layout across screen sizes.
-- **Deployment & Hosting:** Backend is hosted with Render (including the PostgreSQL database), and frontend is deployed using Vercel.
+
+- Journal Entries: Create, edit, and delete private entries with optional AI-generated feedback.
+- Full Authentication System: Secure user registration, login, password reset, and token-based access control.
+- Email Password Reset Flow: Complete email reset system with token generation, SendGrid integration, and secure password change.
+- AI Rate Limiting: Free users can request 3 AI responses before being limited (OpenAI API usage controlled).
+- Responsive UI: Mobile-friendly layout built with Tailwind CSS and dark-mode styling.
+- Production Deployment: Frontend hosted on Vercel; backend and PostgreSQL hosted on Render.
+- Pagination & Filtering: Journal entries are paginated and easy to browse.
+- Nightingale GPT Link: A direct link to a ChatGPT-powered AI companion is included in the navbar under "AI Companion."
 
 ## Technologies
-- **Frontend**:
-  - **React**: Framework for building dynamic user interfaces.
-  - **Vite**: Lightning-fast dev environment.
-  - **Tailwind CSS**: Utility-first styling.
-  - **React Router**: Handles multi-page routing.
 
-- **Backend**:
-  - **FastAPI**: Python web framework for fast APIs.
-  - **PostgreSQL**: Render-hosted relational database.
-  - **SQLAlchemy**: ORM for database models.
-  - **Pydantic / Pydantic Settings**: Type-safe request validation.
-  - **JWT (python-jose)**: Secure authentication.
-  - **OpenAI**: AI feedback integration using the latest API version.
+### Frontend
+- React – Component-based frontend framework
+- Vite – Lightweight build and dev environment
+- Tailwind CSS – Utility-first CSS framework
+- React Router – Handles client-side routing
+- Email Link Routing – Supports secure token-based flows
 
-- **Deployment**:
-  - **Render**: Backend & DB hosting.
-  - **Vercel**: Frontend deployment with continuous integration.
-  - **GitHub**: Source code management and CI.
+### Backend
+- FastAPI – Python web framework for fast APIs
+- PostgreSQL – Render-hosted relational database
+- SQLAlchemy – ORM for managing database models
+- Pydantic / Pydantic Settings – Type-safe validation and config
+- JWT (python-jose) – Secure authentication tokens
+- SendGrid – Email delivery for password reset flows
+- OpenAI API – AI-generated journaling feedback
+- Alembic – Database migrations and schema versioning
+
+### Deployment
+- Render – Backend and PostgreSQL hosting
+- Vercel – Frontend deployment with CI/CD
+- GitHub – Source control and version tracking
 
 ## Skills Demonstrated
 - Full-stack application architecture and deployment
-- Secure user authentication and token management
+- Secure authentication and token-based access
+- Email password reset using tokens and expiration
+- React state management and dynamic routing
 - RESTful API design with FastAPI and PostgreSQL
-- Tailwind CSS design for responsive user interfaces
-- Git/GitHub version control with remote push configuration
-- API integration with OpenAI and rate limiting
-- Debugging CORS, environment variables, and cloud hosting issues
-- State management with React hooks and context
-- Database migrations with Alembic for schema updates
+- Environment variable and secret management
+- Responsive UI design with Tailwind CSS
+- Real-time debugging and error handling
+- Deployment pipelines with GitHub, Render, and Vercel
 
 ## Usage Instructions
-1. **Access the Web App**:
-   - Visit the live app: [https://nightingaleapp.ai](https://nightingaleapp.ai)
-   - Use the demo account (`demo@nightingale.ai` / `demo123!`) to log in.
-   - Navigate to the Journal page to write, edit, and submit an entry.
 
-2. **Development Setup**:
-   - Clone the repository: `git clone https://github.com/Cyberbot777/nightingale.git`
-   - Navigate to the backend and frontend folders to install dependencies.
-   - Backend: `uvicorn main:app --reload`
-   - Frontend: `npm run dev`
-   - Environment Variables must be set locally for OpenAI and PostgreSQL URLs.
+### 1. Access the Live App
+- Visit: [https://nightingaleapp.ai](https://nightingaleapp.ai)
+- Demo Login: `demo@nightingale.ai` / `demo123!`
+- Try the GPT Assistant from the "AI Companion" link in the navigation bar
+- Go to the Journal page to write, edit, or request AI feedback
+
+### 2. Development Setup
+
+```bash
+git clone https://github.com/Cyberbot777/nightingale.git
+cd nightingale
+
+# Backend
+cd backend
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+uvicorn main:app --reload
+
+# Frontend
+cd ../frontend
+npm install
+npm run dev
+```
+
+- Create `.env` files in both frontend and backend for secrets like:
+  - `OPENAI_API_KEY`
+  - `DATABASE_URL`
+  - `SENDGRID_API_KEY`
+  - `SENDGRID_FROM_EMAIL`
 
 ## Author
-- Richard Hall
 
-## Date
+- Richard Hall  
+
+## Timeline
+
 - Created: May 25, 2025  
-- Last Updated: June 4, 2025
+- Last Updated: June 5, 2025  
