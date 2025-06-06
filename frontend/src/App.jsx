@@ -27,7 +27,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/journal" element={<Journal token={token} setToken={setToken} />} />
         <Route path="/login" element={<Login setToken={setToken} />} />
-        <Route path="/register" element={<Register />} />
+        <Route path="/register" element={<Register setToken={setToken} />} />
         <Route path="/about" element={<About />} />
       </Routes>
     </Router>

@@ -16,9 +16,6 @@ const About = () => {
         <p className="text-white italic text-m mb-6 text-center">
           “Our first journey is to find that special place for us.” – Florence Nightingale
         </p>
-        <p className="text-gray-400 text-sm mb-1 text-center">
-          **Registration Coming Soon**
-        </p>
         <p className="text-gray-400 text-sm mb-4 text-center">
           Demo login is in README on GitHub:<br />
           <a href="https://github.com/Cyberbot777/nightingale" className="text-indigo-400 hover:text-indigo-500 transition-colors" target="_blank" rel="noopener noreferrer">https://github.com/Cyberbot777/nightingale</a>
