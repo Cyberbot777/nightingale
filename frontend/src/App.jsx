@@ -7,6 +7,9 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import About from './pages/About';
 import { useState, useEffect } from 'react';
+import ResetPassword from './pages/ResetPassword';
+import ForgotPassword from './pages/ForgotPassword';
+
 
 function App() {
   const [token, setToken] = useState(localStorage.getItem('token') || '');
@@ -28,6 +31,8 @@ function App() {
         <Route path="/journal" element={<Journal token={token} setToken={setToken} />} />
         <Route path="/login" element={<Login setToken={setToken} />} />
         <Route path="/register" element={<Register setToken={setToken} />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/about" element={<About />} />
       </Routes>
     </Router>
