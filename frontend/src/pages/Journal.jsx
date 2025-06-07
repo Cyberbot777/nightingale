@@ -329,12 +329,12 @@ const Journal = ({ token, setToken }) => {
                 console.log("Upgrade clicked");
                 setIsModalOpen(true);
               }}
-              className="text-white text-sm hover:text-indigo-400 transition-colors duration-200 cursor-pointer"
+              className="text-yellow-300 text-sm hover:text-yellow-400  transition-colors duration-200 cursor-pointer"
             >
               Upgrade to Premium
             </span>
           ) : (
-            <span className="text-gray-400 medium italic">
+            <span className="text-gray-400 -medium italic">
               👑 Premium Member
             </span>
           )}

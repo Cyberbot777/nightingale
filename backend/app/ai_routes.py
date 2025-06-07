@@ -28,7 +28,7 @@ def ai_feedback(
         user = db.query(models.User).filter(models.User.id == current_user.id).first()
         print(f"Current feedback_count: {user.feedback_count}")
         if user.feedback_count >= 3:
-            raise HTTPException(status_code=403, detail="AI feedback limit reached (3/3)")
+            raise HTTPException(status_code=403, detail="Upgrade to Premium. Free AI feedback limit reached (3/3)")
 
     entry = (
         db.query(models.JournalEntry)

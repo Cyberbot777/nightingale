@@ -91,7 +91,7 @@ def ai_feedback(
     is_demo = current_user.email == "demo@nightingale.ai"
     has_reached_limit = current_user.feedback_count >= 3
     if not is_demo and has_reached_limit:
-        raise HTTPException(status_code=403, detail="AI feedback limit reached (3/3)")
+        raise HTTPException(status_code=403, detail="Updrade to Premium. Free AI feedback limit reached (3/3)")
 
     entry = db.query(models.JournalEntry).filter(
         models.JournalEntry.id == entry_id,
