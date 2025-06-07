@@ -1,7 +1,7 @@
 import React from 'react';
 
-export default function PaywallModal({ isOpen, onClose }) {
-  if (!isOpen) return null;
+export default function PaywallModal({ show, onClose }) {
+  if (!show) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">

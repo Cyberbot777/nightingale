@@ -9,6 +9,8 @@ from app.journal_routes import journal_router
 from app.auth_routes import auth_router, get_current_user
 from app.ai_routes import router as ai_router
 from pydantic import BaseModel
+from app.models import User
+
 
 # Create database tables
 models.Base.metadata.create_all(bind=engine)
@@ -49,3 +51,12 @@ class JournalCreate(BaseModel):
 @app.get("/")
 def read_root():
     return {"message": "Hello from Nightingale backend!"}
+
+@app.get("/me")
+def get_current_user_data(current_user: User = Depends(get_current_user)):
+    return {
+        "email": current_user.email,
+        "is_premium": current_user.is_premium,
+        "feedback_count": current_user.feedback_count  
+    }
+

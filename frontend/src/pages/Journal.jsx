@@ -19,6 +19,36 @@ const Journal = ({ token, setToken }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
+  const [isPremium, setIsPremium] = useState(false);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const API_BASE_URL = import.meta.env.VITE_API_URL;
+
+        const res = await fetch(`${API_BASE_URL}/me`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          setUser(data);
+          setIsPremium(data.is_premium);
+          console.log("User fetched:", data);
+        } else {
+          console.error("Failed to fetch user");
+        }
+      } catch (error) {
+        console.error("Error fetching user:", error);
+      }
+    };
+
+    if (token) {
+      fetchUser();
+    }
+  }, [token]);
 
   const fetchEntries = async () => {
     setAddLoading(false);
@@ -294,7 +324,10 @@ const Journal = ({ token, setToken }) => {
 
         <div className="mb-4 text-center">
           <span
-            onClick={() => setIsModalOpen(true)}
+            onClick={() => {
+              console.log("Upgrade clicked");
+              setIsModalOpen(true);
+            }}
             className="text-white text-sm hover:text-indigo-400 transition-colors duration-200 cursor-pointer"
           >
             Upgrade to Premium
@@ -524,6 +557,10 @@ const Journal = ({ token, setToken }) => {
             </div>
           </div>
         )}
+        <PaywallModal
+          show={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+        />
       </div>
     </div>
   );
