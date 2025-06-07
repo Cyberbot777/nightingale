@@ -323,7 +323,7 @@ const Journal = ({ token, setToken }) => {
         </p>
 
         <div className="mb-4 text-center">
-          {!isPremium && (
+          {!isPremium ? (
             <span
               onClick={() => {
                 console.log("Upgrade clicked");
@@ -332,6 +332,10 @@ const Journal = ({ token, setToken }) => {
               className="text-white text-sm hover:text-indigo-400 transition-colors duration-200 cursor-pointer"
             >
               Upgrade to Premium
+            </span>
+          ) : (
+            <span className="text-gray-400 medium italic">
+              👑 Premium Member
             </span>
           )}
         </div>
