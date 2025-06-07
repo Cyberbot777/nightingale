@@ -12,7 +12,7 @@ from datetime import datetime, timedelta
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login")
 
-# ✅ Use lowercase settings based on config.py field names
+# Use lowercase settings based on config.py field names
 SECRET_KEY = settings.secret_key
 ALGORITHM = settings.algorithm
 ACCESS_TOKEN_EXPIRE_MINUTES = settings.access_token_expire_minutes
@@ -43,7 +43,7 @@ def decode_access_token(token: str) -> dict:
         )
 
 def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
-    print("Incoming token:", token)  # <-- ✅ ADD THIS LINE
+    print("Incoming token:", token) 
     try:
         payload = decode_access_token(token)
         user_id: int = payload.get("sub")

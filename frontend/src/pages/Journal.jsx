@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { API_BASE_URL } from "../api";
 import { useNavigate } from "react-router-dom";
+import PaywallModal from "../components/PaywallModal";
 
 const Journal = ({ token, setToken }) => {
   const [entries, setEntries] = useState([]);
@@ -15,6 +16,7 @@ const Journal = ({ token, setToken }) => {
   const [hasJournaledToday, setHasJournaledToday] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [entryToDelete, setEntryToDelete] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
 
   const fetchEntries = async () => {
@@ -282,13 +284,42 @@ const Journal = ({ token, setToken }) => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-950 via-black to-gray-900 text-white p-6">
       <div className="max-w-2xl mx-auto animate-fade-in-up">
-        <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2 text-center">My Journal</h1>
+        <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2 text-center">
+          My Journal
+        </h1>
 
         {hasJournaledToday && (
-          <p className="text-gray-400 italic text-sm mb-4 text-center">Reflect on your day with Nightingale's Wisdom</p>
+          <p className="text-gray-400 italic text-sm mb-4 text-center">
+            Reflect on your day with Nightingale's Wisdom
+          </p>
         )}
+        {/* <div className="mb-4 text-center">
+          <p className="text-sm text-gray-400">
+            <span className="font-medium text-white">Upgrade to Premium</span>{" "}
+            for unlimited journaling and full Nightingale Wisdom.
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="ml-2 text-blue-400 underline hover:text-blue-300 transition"
+            >
+              Learn more →
+            </button>
+          </p>
+        </div> */}
 
-        <form onSubmit={handleAddEntry} className="mb-6 p-4 bg-gray-900 border border-gray-700 rounded-md shadow-md">
+        {/* <div className="mb-4 text-center">
+  <span
+    onClick={() => setIsModalOpen(true)}
+    className="text-white text-sm hover:text-indigo-400 transition-colors duration-200 cursor-pointer"
+  >
+    Upgrade to Premium →
+  </span>
+</div> */}
+
+
+        <form
+          onSubmit={handleAddEntry}
+          className="mb-6 p-4 bg-gray-900 border border-gray-700 rounded-md shadow-md"
+        >
           <input
             type="text"
             placeholder="A title for your thoughts..."

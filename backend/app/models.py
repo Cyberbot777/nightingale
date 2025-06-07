@@ -2,7 +2,7 @@
 # SQLAlchemy models for the Nightingale backend application
 # Includes: User, JournalEntry, PasswordResetToken
 
-from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey, Boolean
 from sqlalchemy.orm import relationship
 from datetime import datetime, timedelta
 from app.database import Base  
@@ -16,6 +16,8 @@ class User(Base):
     email = Column(String, unique=True, index=True, nullable=False)
     hashed_password = Column(Text, nullable=False)  
     feedback_count = Column(Integer, default=0, nullable=False)
+    is_premium = Column(Boolean, default=False, nullable=False)
+
 
     # Relationship to journal entries
     entries = relationship("JournalEntry", back_populates="owner")
