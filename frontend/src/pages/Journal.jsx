@@ -20,7 +20,6 @@ const Journal = ({ token, setToken }) => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
 
-
   const fetchEntries = async () => {
     setAddLoading(false);
     setLoadingStates({});
@@ -289,19 +288,16 @@ const Journal = ({ token, setToken }) => {
         <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2 text-center">
           My Journal
         </h1>
-
-        {hasJournaledToday && (
-          <p className="text-gray-400 italic text-sm mb-4 text-center">
-            Reflect on your day with Nightingale's Wisdom
-          </p>
-        )}
+        <p className="text-gray-400 italic text-sm mb-4 text-center">
+          Reflect on your day with Nightingale's Wisdom
+        </p>
 
         <div className="mb-4 text-center">
           <span
             onClick={() => setIsModalOpen(true)}
             className="text-white text-sm hover:text-indigo-400 transition-colors duration-200 cursor-pointer"
           >
-            Upgrade to Premium (move to navbar)
+            Upgrade to Premium
           </span>
         </div>
 
