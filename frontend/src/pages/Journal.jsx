@@ -18,6 +18,8 @@ const Journal = ({ token, setToken }) => {
   const [entryToDelete, setEntryToDelete] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
+  const [user, setUser] = useState(null);
+
 
   const fetchEntries = async () => {
     setAddLoading(false);
@@ -293,28 +295,15 @@ const Journal = ({ token, setToken }) => {
             Reflect on your day with Nightingale's Wisdom
           </p>
         )}
-        {/* <div className="mb-4 text-center">
-          <p className="text-sm text-gray-400">
-            <span className="font-medium text-white">Upgrade to Premium</span>{" "}
-            for unlimited journaling and full Nightingale Wisdom.
-            <button
-              onClick={() => setIsModalOpen(true)}
-              className="ml-2 text-blue-400 underline hover:text-blue-300 transition"
-            >
-              Learn more →
-            </button>
-          </p>
-        </div> */}
 
-        {/* <div className="mb-4 text-center">
-  <span
-    onClick={() => setIsModalOpen(true)}
-    className="text-white text-sm hover:text-indigo-400 transition-colors duration-200 cursor-pointer"
-  >
-    Upgrade to Premium →
-  </span>
-</div> */}
-
+        <div className="mb-4 text-center">
+          <span
+            onClick={() => setIsModalOpen(true)}
+            className="text-white text-sm hover:text-indigo-400 transition-colors duration-200 cursor-pointer"
+          >
+            Upgrade to Premium (move to navbar)
+          </span>
+        </div>
 
         <form
           onSubmit={handleAddEntry}

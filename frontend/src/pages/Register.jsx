@@ -22,7 +22,7 @@ export default function Register({ setToken }) {
 
     try {
       // 1. Register
-      const res = await fetch("http://localhost:8000/register", {
+      const res = await fetch("https://nightingale-backend.onrender.com/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -34,7 +34,7 @@ export default function Register({ setToken }) {
       }
 
       // 2. Auto-login
-      const loginRes = await fetch("http://localhost:8000/login-json", {
+      const loginRes = await fetch("https://nightingale-backend.onrender.com/login-json", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username: email, password }),
@@ -44,10 +44,10 @@ export default function Register({ setToken }) {
       localStorage.setItem("token", loginData.access_token);
       setToken(loginData.access_token);
 
-      // ✅ Show success message
+      // Show success message
       setSuccess("Account created! Logging you in...");
 
-      // ⏳ Wait before redirecting so user sees the message
+      // Wait before redirecting so user sees the message
       setTimeout(() => {
         navigate("/journal");
       }, 1200);
