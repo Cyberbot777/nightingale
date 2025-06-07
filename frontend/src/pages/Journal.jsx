@@ -323,15 +323,17 @@ const Journal = ({ token, setToken }) => {
         </p>
 
         <div className="mb-4 text-center">
-          <span
-            onClick={() => {
-              console.log("Upgrade clicked");
-              setIsModalOpen(true);
-            }}
-            className="text-white text-sm hover:text-indigo-400 transition-colors duration-200 cursor-pointer"
-          >
-            Upgrade to Premium
-          </span>
+          {!isPremium && (
+            <span
+              onClick={() => {
+                console.log("Upgrade clicked");
+                setIsModalOpen(true);
+              }}
+              className="text-white text-sm hover:text-indigo-400 transition-colors duration-200 cursor-pointer"
+            >
+              Upgrade to Premium
+            </span>
+          )}
         </div>
 
         <form
