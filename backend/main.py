@@ -21,7 +21,7 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:5173",
         "https://nightingale-sigma.vercel.app",
-        "https://www.nightingaleapp.ai"
+        "https://www.nightingaleapp.ai",
         "https://nightingaleapp.ai",
     ],
     allow_credentials=True,
