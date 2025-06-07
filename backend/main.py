@@ -10,6 +10,7 @@ from app.auth_routes import auth_router, get_current_user
 from app.ai_routes import router as ai_router
 from pydantic import BaseModel
 from app.models import User
+from fastapi import Request
 
 
 # Create database tables
@@ -59,4 +60,13 @@ def get_current_user_data(current_user: User = Depends(get_current_user)):
         "is_premium": current_user.is_premium,
         "feedback_count": current_user.feedback_count  
     }
+
+
+# Webhook Square
+@app.post("/webhook/square")
+async def square_webhook(request: Request):
+    payload = await request.json()
+    print("Webhook received from Square:")
+    print(payload)
+    return {"status": "ok"}
 
