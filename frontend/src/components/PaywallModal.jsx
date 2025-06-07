@@ -25,12 +25,12 @@ export default function PaywallModal({ show, onClose }) {
           </a>
 
           <a
-            href="https://checkout.square.site/merchant/ML05E1GNFK6RJ/checkout/PYGOTZYBYCNBSMY64QRMVUFI"
+            href="https://square.link/u/jcn1HdcF"
             target="_blank"
             rel="noopener noreferrer"
             className="block w-full text-center bg-gray-800 hover:bg-gray-900 text-white font-medium py-3 px-4 rounded-xl transition duration-200"
           >
-            Yearly Plan – $50/year
+            Yearly Plan – $49.99/year
           </a>
         </div>
 
