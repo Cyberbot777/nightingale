@@ -524,7 +524,7 @@ const Journal = ({ token, setToken }) => {
           >
             Previous
           </button>
-          <span className="text-yellow-300 text-lg">Page {page}</span>
+          <span className="text-white text-lg">Page {page}</span>
           <button
             onClick={handleNextPage}
             disabled={!hasMore}
