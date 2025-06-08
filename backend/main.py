@@ -1,16 +1,18 @@
 # backend/app/main.py
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy.orm import Session
-from fastapi.security import OAuth2PasswordBearer
-from app import models
+from fastapi import Request
+from app.database import SessionLocal 
 from app.database import engine, SessionLocal
+from app import models
 from app.journal_routes import journal_router
 from app.auth_routes import auth_router, get_current_user
 from app.ai_routes import router as ai_router
-from pydantic import BaseModel
 from app.models import User
-from fastapi import Request
+from pydantic import BaseModel
+from sqlalchemy.orm import Session
+from fastapi.security import OAuth2PasswordBearer
+import json
 
 
 # Create database tables
@@ -67,6 +69,24 @@ def get_current_user_data(current_user: User = Depends(get_current_user)):
 async def square_webhook(request: Request):
     payload = await request.json()
     print("Webhook received from Square:")
-    print(payload)
+    print(json.dumps(payload, indent=2))
+
+    try:
+        email = payload["data"]["object"]["payment"]["buyer_email_address"]
+
+        db: Session = SessionLocal()
+        user = db.query(User).filter(User.email == email).first()
+
+        if user:
+            user.is_premium = True
+            db.commit()
+            print(f"Upgraded user {email} to premium")
+        else:
+            print(f"No user found with email: {email}")
+
+    except Exception as e:
+        print(f"Error processing webhook: {e}")
+
     return {"status": "ok"}
+
 
