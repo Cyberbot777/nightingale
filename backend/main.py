@@ -79,6 +79,7 @@ async def square_webhook(request: Request):
 
         if user:
             user.is_premium = True
+            user.feedback_count = 0
             db.commit()
             print(f"Upgraded user {email} to premium")
         else:

@@ -21,12 +21,12 @@ class EntryText(BaseModel):
 def ai_feedback(
     entry_id: int, db: Session = Depends(get_db), current_user=Depends(get_current_user)
 ):
-    print(f"User: {current_user.email}, Premium: {current_user.is_premium}")
+    # Always re-fetch the user to get the latest premium status and feedback count
+    user = db.query(models.User).filter(models.User.id == current_user.id).first()
+    print(f"User: {user.email}, Premium: {user.is_premium}, Feedback Count: {user.feedback_count}")
 
     # Enforce 3-feedback limit for non-premium users
-    if not current_user.is_premium:
-        user = db.query(models.User).filter(models.User.id == current_user.id).first()
-        print(f"Current feedback_count: {user.feedback_count}")
+    if not user.is_premium:
         if user.feedback_count >= 3:
             raise HTTPException(status_code=403, detail="Upgrade to Premium. Free AI feedback limit reached (3/3)")
 
@@ -34,7 +34,7 @@ def ai_feedback(
         db.query(models.JournalEntry)
         .filter(
             models.JournalEntry.id == entry_id,
-            models.JournalEntry.user_id == current_user.id,
+            models.JournalEntry.user_id == user.id,
         )
         .first()
     )
@@ -63,7 +63,7 @@ def ai_feedback(
         entry.feedback = feedback
 
         # Update feedback_count for non-premium users
-        if not current_user.is_premium:
+        if not user.is_premium:
             print(f"Updating feedback_count for: {user.email}")
             user.feedback_count += 1
             db.add(user)
@@ -73,7 +73,6 @@ def ai_feedback(
         print("Commit completed")
 
         db.refresh(entry)
-        db.refresh(current_user)
 
         return {"feedback": feedback}
 

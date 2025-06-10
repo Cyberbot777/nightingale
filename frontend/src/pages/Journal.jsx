@@ -217,6 +217,8 @@ const Journal = ({ token, setToken }) => {
       });
 
       const data = await response.json();
+      console.log("AI feedback response:", response.status, data);
+
       if (response.ok) {
         const entryIndex = entries.findIndex((entry) => entry.id === id);
         const updatedEntries = [...entries];
