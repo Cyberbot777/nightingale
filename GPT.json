@@ -1,0 +1,194 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Nightingale API",
+    "version": "1.0.5"
+  },
+  "servers": [
+    {
+      "url": "https://nightingale-backend.onrender.com"
+    }
+  ],
+  "paths": {
+    "/login-json": {
+      "post": {
+        "operationId": "login_user_json",
+        "summary": "Login using JSON to receive token",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": { "type": "string" },
+                  "password": { "type": "string" }
+                },
+                "required": ["username", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful"
+          }
+        }
+      }
+    },
+    "/journal": {
+      "post": {
+        "operationId": "create_journal_entry",
+        "summary": "Create a new journal entry",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": { "type": "string" },
+                  "content": { "type": "string" },
+                  "feedback": { "type": "string" }
+                },
+                "required": ["title", "content"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Journal entry created" }
+        }
+      },
+      "get": {
+        "operationId": "get_all_journal_entries",
+        "summary": "List all journal entries",
+        "parameters": [
+          {
+            "name": "skip",
+            "in": "query",
+            "schema": { "type": "integer", "default": 0 }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": { "type": "integer", "default": 10 }
+          }
+        ],
+        "responses": {
+          "200": { "description": "List of journal entries" }
+        }
+      }
+    },
+    "/journal/{entry_id}": {
+      "get": {
+        "operationId": "get_single_journal_entry",
+        "summary": "Get a single journal entry by ID",
+        "parameters": [
+          {
+            "name": "entry_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "The requested journal entry" }
+        }
+      },
+      "put": {
+        "operationId": "update_journal_entry",
+        "summary": "Update a journal entry by ID",
+        "parameters": [
+          {
+            "name": "entry_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": { "type": "string" },
+                  "content": { "type": "string" },
+                  "feedback": { "type": "string" }
+                },
+                "required": ["title", "content"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Updated journal entry" }
+        }
+      },
+      "delete": {
+        "operationId": "delete_journal_entry",
+        "summary": "Delete a journal entry by ID",
+        "parameters": [
+          {
+            "name": "entry_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Journal entry deleted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ai-feedback/{entry_id}": {
+      "post": {
+        "operationId": "add_ai_feedback",
+        "summary": "Generate and add AI feedback to a journal entry",
+        "parameters": [
+          {
+            "name": "entry_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "AI feedback added",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "feedback": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Feedback limit reached or permission denied"
+          },
+          "404": {
+            "description": "Journal entry not found"
+          }
+        }
+      }
+    }
+  }
+}
