@@ -77,13 +77,13 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
     if db_user.email == "gpt2@nightingale.ai":
-        token = create_access_token(data={"user_id": db_user.id}, expires_delta=timedelta(days=30))
+        token = create_access_token(data={"user_id": db_user.id}, expires_delta=timedelta(days=90))
     else:
         token = create_access_token(data={"user_id": db_user.id})
 
     return {"access_token": token, "token_type": "bearer"}
 
-# JSON login
+# JSON login 
 @auth_router.post("/login-json", response_model=Token)
 def login_json(
     data: dict = Body(...),
@@ -103,7 +103,7 @@ def login_json(
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
     if db_user.email == "gpt2@nightingale.ai":
-        token = create_access_token(data={"user_id": db_user.id}, expires_delta=timedelta(days=30))
+        token = create_access_token(data={"user_id": db_user.id}, expires_delta=timedelta(days=90))
     else:
         token = create_access_token(data={"user_id": db_user.id})
 
