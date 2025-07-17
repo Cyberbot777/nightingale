@@ -25,6 +25,13 @@ def ai_feedback(
     user = db.query(models.User).filter(models.User.id == current_user.id).first()
     print(f"User: {user.email}, Premium: {user.is_premium}, Feedback Count: {user.feedback_count}")
 
+    # ✅ Reset feedback_count for users who just upgraded to premium
+    if user.is_premium and user.feedback_count >= 3:
+        print(f"Resetting feedback_count for upgraded user: {user.email}")
+        user.feedback_count = 0
+        db.add(user)
+        db.commit()
+
     # Enforce 3-feedback limit for non-premium users
     if not user.is_premium:
         if user.feedback_count >= 3:
@@ -59,10 +66,9 @@ def ai_feedback(
         )
 
         feedback = response.choices[0].message.content
-
         entry.feedback = feedback
 
-        # Update feedback_count for non-premium users
+        # Only increment for free users
         if not user.is_premium:
             print(f"Updating feedback_count for: {user.email}")
             user.feedback_count += 1
@@ -71,7 +77,6 @@ def ai_feedback(
 
         db.commit()
         print("Commit completed")
-
         db.refresh(entry)
 
         return {"feedback": feedback}
