@@ -19,6 +19,9 @@ import json
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+from app.config import settings
+print("DEBUG DB URL:", settings.database_url)
+
 
 # CORS setup
 app.add_middleware(

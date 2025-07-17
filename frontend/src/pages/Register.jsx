@@ -22,7 +22,7 @@ export default function Register({ setToken }) {
 
     try {
       // 1. Register
-      const res = await fetch("https://nightingale-backend.onrender.com/register", {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -34,7 +34,7 @@ export default function Register({ setToken }) {
       }
 
       // 2. Auto-login
-      const loginRes = await fetch("https://nightingale-backend.onrender.com/login-json", {
+      const loginRes = await fetch(`${import.meta.env.VITE_API_URL}/login-json`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username: email, password }),

@@ -47,14 +47,18 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db: Session = De
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         user_id: int = payload.get("user_id")
+        print("GET /me DEBUG — token user_id:", user_id)  # 🔍 Debug line
         if user_id is None:
             raise credentials_exception
     except JWTError:
         raise credentials_exception
+
     user = db.query(models.User).filter(models.User.id == user_id).first()
     if user is None:
         raise credentials_exception
+
     return user
+
 
 # Registration
 @auth_router.post("/register", response_model=UserOut)
@@ -73,7 +77,14 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
 # OAuth2 password grant login
 @auth_router.post("/login", response_model=Token)
 def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
-    db_user = db.query(models.User).filter(models.User.email == form_data.username.strip()).first()
+    db_user = db.query(models.User).filter(models.User.email.ilike(form_data.username.strip())).first()
+
+    print("LOGIN DEBUG:")
+    print(" - Username:", form_data.username)
+    print(" - Raw password:", form_data.password)
+    print(" - Found user:", db_user.email if db_user else "None")
+    print(" - Hashed password:", db_user.hashed_password if db_user else "None")
+    print(" - Password match:", verify_password(form_data.password, db_user.hashed_password) if db_user else "N/A")
 
     if not db_user or not verify_password(form_data.password, db_user.hashed_password):
         raise HTTPException(status_code=401, detail="Invalid credentials")
@@ -84,6 +95,8 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
         token = create_access_token(data={"user_id": db_user.id})
 
     return {"access_token": token, "token_type": "bearer"}
+
+
 
 # JSON login 
 @auth_router.post("/login-json", response_model=Token)

@@ -12,7 +12,10 @@ import ForgotPassword from "./pages/ForgotPassword";
 import UpgradeSuccess from "./pages/UpgradeSuccess";
 
 function App() {
-  const [token, setToken] = useState(localStorage.getItem("token") || "");
+  const [token, setToken] = useState(() => localStorage.getItem("token") || null);
+
+
+
 
   useEffect(() => {
     const handleStorageChange = () => {

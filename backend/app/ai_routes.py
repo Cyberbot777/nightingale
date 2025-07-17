@@ -25,7 +25,7 @@ def ai_feedback(
     user = db.query(models.User).filter(models.User.id == current_user.id).first()
     print(f"User: {user.email}, Premium: {user.is_premium}, Feedback Count: {user.feedback_count}")
 
-    # ✅ Reset feedback_count for users who just upgraded to premium
+    # Reset feedback_count for users who just upgraded to premium
     if user.is_premium and user.feedback_count >= 3:
         print(f"Resetting feedback_count for upgraded user: {user.email}")
         user.feedback_count = 0

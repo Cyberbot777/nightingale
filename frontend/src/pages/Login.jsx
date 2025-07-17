@@ -82,7 +82,7 @@ export default function Login({ setToken }) {
         </form>
         {error && <p className="text-yellow-300 mt-2 font-sans text-sm text-center">{error}</p>}
         
-        {/* 👇 Forgot password link added here */}
+        {/* Forgot password link added here */}
         <p className="text-sm text-center text-gray-400 mt-4">
           <a href="/forgot-password" className="hover:text-indigo-400">
             Forgot your password?
