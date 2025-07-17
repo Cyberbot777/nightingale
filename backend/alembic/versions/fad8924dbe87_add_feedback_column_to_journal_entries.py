@@ -15,9 +15,24 @@ down_revision: Union[str, None] = '596b63e7f2f0'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
+
 def upgrade() -> None:
     """Upgrade schema."""
-    op.add_column('journal_entries', sa.Column('feedback', sa.String(), nullable=True))
+    # Only add column if it does not already exist
+    op.execute("""
+        DO $$
+        BEGIN
+            IF NOT EXISTS (
+                SELECT 1 FROM information_schema.columns 
+                WHERE table_name = 'journal_entries' 
+                AND column_name = 'feedback'
+            ) THEN
+                ALTER TABLE journal_entries ADD COLUMN feedback VARCHAR;
+            END IF;
+        END
+        $$;
+    """)
+
 
 def downgrade() -> None:
     """Downgrade schema."""

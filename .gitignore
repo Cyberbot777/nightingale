@@ -1,0 +1,31 @@
+# === Node (frontend) ===
+node_modules/
+dist/
+.vite/
+.next/
+.env
+
+# === Python (backend) ===
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+env/
+venv/
+.mypy_cache/
+.dmypy.json
+.pyre/
+.pytest_cache/
+
+# === Alembic (if using SQLite locally)
+*.sqlite3
+
+# === Docker ===
+*.log
+*.pid
+
+# === VSCode / OS ===
+.vscode/
+.DS_Store
+Thumbs.db
