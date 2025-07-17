@@ -87,16 +87,20 @@ def ai_feedback(
     db: Session = Depends(get_db),
     current_user: models.User = Depends(get_current_user)
 ):
-
     is_demo = current_user.email in ["demo@nightingale.ai", "gpt3@nightingale.ai"]
-    has_reached_limit = current_user.feedback_count >= 3
+    has_reached_limit = current_user.feedback_count >= 3 and not current_user.is_premium
+
     if not is_demo and has_reached_limit:
-        raise HTTPException(status_code=403, detail="Updrade to Premium. Free AI feedback limit reached (3/3)")
+        raise HTTPException(
+            status_code=403,
+            detail="Upgrade to Premium. Free AI feedback limit reached (3/3)"
+        )
 
     entry = db.query(models.JournalEntry).filter(
         models.JournalEntry.id == entry_id,
         models.JournalEntry.user_id == current_user.id
     ).first()
+
 
     if not entry:
         raise HTTPException(status_code=404, detail="Journal entry not found")

@@ -29,3 +29,5 @@ venv/
 .vscode/
 .DS_Store
 Thumbs.db
+
+seed_users.sql
