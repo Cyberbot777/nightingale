@@ -59,9 +59,9 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
                 detail="User not found",
             )
 
-        # --- Demo user bypass logic ---
+        # Demo user bypass logic
         if user.email == "":
-            user.feedback_count = 999  # Give unlimited AI feedback
+            user.feedback_count = 999  
 
         return user
     except JWTError:

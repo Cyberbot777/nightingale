@@ -1,7 +1,3 @@
-# app/models.py
-# SQLAlchemy models for the Nightingale backend application
-# Includes: User, JournalEntry, PasswordResetToken
-
 from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey, Boolean
 from sqlalchemy.orm import relationship
 from datetime import datetime, timedelta

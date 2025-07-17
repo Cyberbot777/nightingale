@@ -21,6 +21,8 @@ ACCESS_TOKEN_EXPIRE_MINUTES = settings.access_token_expire_minutes
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
+
+# Hash Utilities
 def hash_password(password: str):
     return pwd_context.hash(password)
 
@@ -30,12 +32,14 @@ def verify_password(plain_password, hashed_password):
     except Exception:
         return False
 
+
 # Create Token
 def create_access_token(data: dict, expires_delta: timedelta = None):
     to_encode = data.copy()
     expire = datetime.utcnow() + (expires_delta or timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+
 
 # Get Current User
 async def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
@@ -47,7 +51,6 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db: Session = De
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         user_id: int = payload.get("user_id")
-        print("GET /me DEBUG — token user_id:", user_id)  # 🔍 Debug line
         if user_id is None:
             raise credentials_exception
     except JWTError:
@@ -60,7 +63,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db: Session = De
     return user
 
 
-# Registration
+# Register
 @auth_router.post("/register", response_model=UserOut)
 def register(user: UserCreate, db: Session = Depends(get_db)):
     db_user = db.query(models.User).filter(models.User.email == user.email).first()
@@ -74,21 +77,16 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
     db.refresh(new_user)
     return new_user
 
-# OAuth2 password grant login
+
+# OAuth2 Login
 @auth_router.post("/login", response_model=Token)
 def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     db_user = db.query(models.User).filter(models.User.email.ilike(form_data.username.strip())).first()
 
-    print("LOGIN DEBUG:")
-    print(" - Username:", form_data.username)
-    print(" - Raw password:", form_data.password)
-    print(" - Found user:", db_user.email if db_user else "None")
-    print(" - Hashed password:", db_user.hashed_password if db_user else "None")
-    print(" - Password match:", verify_password(form_data.password, db_user.hashed_password) if db_user else "N/A")
-
     if not db_user or not verify_password(form_data.password, db_user.hashed_password):
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
+    # Long-lived token for AI user
     if db_user.email == "gpt3@nightingale.ai":
         token = create_access_token(data={"user_id": db_user.id}, expires_delta=timedelta(days=90))
     else:
@@ -97,15 +95,9 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
     return {"access_token": token, "token_type": "bearer"}
 
 
-
-# JSON login 
+# JSON Login (Non-Form)
 @auth_router.post("/login-json", response_model=Token)
-def login_json(
-    data: dict = Body(...),
-    db: Session = Depends(get_db)
-):
-    print("GPT login payload:", data)
-    
+def login_json(data: dict = Body(...), db: Session = Depends(get_db)):
     username = data.get("username")
     password = data.get("password")
 
@@ -123,6 +115,7 @@ def login_json(
         token = create_access_token(data={"user_id": db_user.id})
 
     return {"access_token": token, "token_type": "bearer"}
+
 
 # Forgot Password
 @auth_router.post("/forgot-password")
@@ -150,7 +143,8 @@ def forgot_password(data: dict = Body(...), db: Session = Depends(get_db)):
 
     return {"message": "Reset email sent"}
 
-# Reset Password
+
+# === Reset Password ===
 @auth_router.post("/reset-password")
 def reset_password(
     token: str = Body(...),
@@ -163,7 +157,6 @@ def reset_password(
         raise HTTPException(status_code=400, detail="Invalid or expired token")
 
     user = db.query(models.User).filter(models.User.id == db_token.user_id).first()
-
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
