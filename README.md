@@ -92,6 +92,5 @@ npm run dev
 - Richard Hall  
 
 ## Timeline
-
-- Created: May 25, 2025  
+ 
 - Last Updated: June 5, 2025  
